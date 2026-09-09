@@ -1,0 +1,27 @@
+# Dependencies & Build Output
+node_modules/
+dist/
+build/
+backend/target/
+*.class
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# ChromaDB Data
+chroma_data/
+__pycache__/
+*.pyc
+
+# Environment & Credentials
+.env
+*.local
+
+# IDE & OS Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.log
+.DS_Store
+Thumbs.db

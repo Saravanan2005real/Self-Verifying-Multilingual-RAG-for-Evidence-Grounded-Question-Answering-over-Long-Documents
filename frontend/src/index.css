@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+/* Typing pulse animation */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink {
+  display: inline-block;
+  width: 7px;
+  height: 15px;
+  background-color: #059669;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 0.9s infinite;
+}
+
+/* Markdown response styling */
+.ai-markdown p {
+  margin-bottom: 0.75rem;
+  line-height: 1.625;
+}
+
+.ai-markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-markdown ul {
+  list-style-type: disc;
+  padding-left: 1.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.ai-markdown ol {
+  list-style-type: decimal;
+  padding-left: 1.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.ai-markdown li {
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}
+
+.ai-markdown strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.ai-markdown code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875em;
+  background-color: #f1f5f9;
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.25rem;
+  color: #0f172a;
+}
+
+.ai-markdown pre {
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.ai-markdown pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.ai-markdown blockquote {
+  border-left: 3px solid #10b981;
+  padding-left: 0.75rem;
+  margin: 0.75rem 0;
+  color: #4b5563;
+  font-style: italic;
+}
