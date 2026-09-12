@@ -1,27 +1,21 @@
-# Dependencies & Build Output
-node_modules/
-dist/
-build/
-backend/target/
-*.class
-
-# Maven
-.mvn/wrapper/maven-wrapper.jar
-
-# ChromaDB Data
-chroma_data/
+# Python environment & cache
+venv/
+.venv/
+env/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
-# Environment & Credentials
+# Local environment variables
 .env
-*.local
 
-# IDE & OS Files
-.idea/
-.vscode/
-*.swp
-*.swo
+# Runtime / temporary files
 *.log
+*.tmp
 .DS_Store
 Thumbs.db
+
+# IDE configuration
+.vscode/
+.idea/
+*.swp

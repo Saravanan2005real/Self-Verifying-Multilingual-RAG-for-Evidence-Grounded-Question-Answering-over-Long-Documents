@@ -1,0 +1,43 @@
+{
+  "document_name": "experiment_report.docx",
+  "document_type": "docx",
+  "file_size_bytes": 37112,
+  "processed_at": "2026-09-12T22:22:08.766031",
+  "total_pages": 1,
+  "native_text_pages": 1,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 504,
+  "average_chunk_words": 73.0,
+  "average_chunk_chars": 502.0,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "experiment_report.docx_c0",
+      "document_name": "experiment_report.docx",
+      "page_number": 1,
+      "section": "System Configuration Details",
+      "chunk_index": 0,
+      "text": "Laboratory Research Protocol - DOCX Evaluation This document verifies the python-docx parser for tables and structured text in the RAG pipeline.\n\nSystem Configuration Details The target environment specifies Windows 11 64-bit with 16GB total visible memory.\n\nComponent | Specification | Status Language Model | Qwen 2.5 3B Local Ollama | Active Embeddings | Paraphrase-Multilingual-MiniLM-L12 | Active Vector DB | FAISS CPU IndexFlatIP | Ready Tesseract OCR | UB-Mannheim OCR Engine | Optional Fallback",
+      "word_count": 73,
+      "char_count": 502,
+      "char_start": 0,
+      "char_end": 502,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    }
+  ]
+}

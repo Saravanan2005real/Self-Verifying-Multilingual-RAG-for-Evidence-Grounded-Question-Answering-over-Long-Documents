@@ -1,0 +1,205 @@
+{
+  "document_name": "FLA-Unit 1.pdf",
+  "document_type": "pdf",
+  "file_size_bytes": 2231471,
+  "processed_at": "2026-09-12T22:22:30.161854",
+  "total_pages": 61,
+  "native_text_pages": 61,
+  "ocr_pages": 0,
+  "total_chunks": 10,
+  "total_characters": 18149,
+  "average_chunk_words": 417.3,
+  "average_chunk_chars": 1903.6,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c0",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 1,
+      "section": "General",
+      "chunk_index": 0,
+      "text": "21CSC301T Formal Language and Automata UNIT I FINITE AUTOMATA AND REGULAR EXPRESSION\n\nAgenda of this Session • Introduction to Automaton\n\nIntroduction to Automaton • The mathematical theory of a simple class of algorithms that are important in computer sciences and mathematics is called the theory of automata.\n\n• It has primarily two applications in computer science 1. Modeling of Finite State Systems 2. Description of regular sets of finite words • It has many emerging applications such as • Computer algorithms and programs • Verification and specification of protocols • Designing of compilers • Searching for patterns in texts • Natural Language Processing\n\nIntroduction to Automaton (Cont..) • Algorithms are recipes that tell us how to solve problems • Initially, mathematicians were interested in the dividing line between what was and what was not algorithmic • There are two approaches to classify algorithms 1. According to their running times and is known as complexity theory 2. According to the types of memory used in implementing them and is known as language theory\n\nAutomata – What is it?\n\n• The term “Automata” is derived from the Greek Word \"αὐτόματα\" which means “self-acting” • An automaton (Automata in plural) is an abstract self-propelled computing device which follows a predetermined sequence of operations automatically • Automata theory deals with the logic of computation with respect to simple machines, referred to as automata • Through automata, computer scientists are able to understand how machines compute functions and solve problems and more\n\nAutomata – What is it? (Cont..) • Automatons are abstract models of machines that perform computations on an input by moving through a series of states or configurations • At each state of the computation, a transition function determines the next configuration on the basis of a finite portion of the present configuration • Once the computation reaches an accepting configuration, it accepts that input • Example : Electric Switch • Other examples : Fan Regulator, Automatic door controller BATTERY Input : switch Output : light bulb Actions : flip switch States : on, off\n\nFamilies of Automata • There are four major families of automaton:\n\n• Finite Automata – Regular Languages • Pushdown Automata – Context free • Linear-bounded Automata – Context sensitive • Turing Machine – Recursively enumerable • Finite Automata is the simplest automata and Turing Machine is the most complex and the most powerful automata",
+      "word_count": 396,
+      "char_count": 2503,
+      "char_start": 0,
+      "char_end": 2503,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c1",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 8,
+      "section": "General",
+      "chunk_index": 1,
+      "text": "– Regular Languages • Pushdown Automata – Context free • Linear-bounded Automata – Context sensitive • Turing Machine – Recursively enumerable • Finite Automata is the simplest automata and Turing Machine is the most complex and the most powerful automata\n\nHistory of Automata Theory • This was originated in 1930s, before the existence of modern computers • Well-renowned computer scientist Alan Turing conceived the first “infinite” (or unbounded) model of computation: the Turing machine in 1936 • Warren McCulloch and Walter Pitts, two neurophysiologists, were the first to present a description of finite automata in 1943 • Later, two computer scientists, G.H.Mealy and E.F.Moore generalized the theory to much more powerful machines\n\nAgenda of this Session • Formal Languages: Strings, Languages, Properties\n\nAlphabet • An alphabet is a finite set of symbols denoted by ∑ • Examples:\n\n∑= {𝑎, 𝑏} ∑= 0,1 is a binary alphabet ∑= {𝑎, 𝑏, 𝑐… 𝑧, 𝐴, 𝐵, 𝐶… 𝑍} is a character alphabet ∑= {0,1,2, … 9}\n\nString • A string over some alphabet is a finite sequence of symbols drawn from that  alphabet.\n\nExample: ∑= 0,1 Strings = {011, 100, 0101, 111, …….} • The term sentence and word are often used as synonyms for the term “string”.\n\n• The length of a string s, written as |s| is the no. of occurrences of symbols in s.\n\n• E.g. banana is a special string of length 6.\n\n• The empty string is a special string of length 0.\n\n• The reverse of a string 𝑢is denoted as 𝑢𝑅 Example:  u=abab uR=baba\n\nSome common terms associated with parts of a String\n\nKleene Closure • The set of all strings including the empty string on the alphabet is written as ∑* • This is also known as Kleene closure or Kleene star after the famous logician who was one of the founders of this concept • For example ∑ = { 1 }, then ∑* = { ε, 1, 11, 111,…..} ∑ = { a, b }, then ∑* = { ε, a, b, ab, ba, aaa, bbb, abab, baba, bbbaa, …..}\n\nLanguage • The term language denotes any set of strings over some fixed alphabet.\n\n• Let ∑ be an alphabet and ∑* be the set of all strings on the alphabet ∑.  Any subset of ∑* is called a language over ∑ or language with alphabet ∑ • Generally, language is denoted by L and L ⊆∑* • Abstract languages like , the empty set or {}, the set containing only empty string are language under this definition.\n\n• All the syntactically well formed pascal programs form a language.\n\n• All grammatically correct English sentences form a language.",
+      "word_count": 445,
+      "char_count": 2435,
+      "char_start": 2505,
+      "char_end": 4940,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 8
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c2",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 15,
+      "section": "General",
+      "chunk_index": 2,
+      "text": "• All grammatically correct English sentences form a language.\n\nOperations on Language • There are several important operations that can be applied to languages.\n\n• The exponentiation operator to languages can be generalized by defining 𝐿0 to be {} and 𝐿𝑖to be 𝐿𝑖−1L.\n\n• Thus 𝐿𝑖is L concatenated with itself i-1 times.\n\nConcatenation of a string • If x and y are strings, then the concatenate of x and y, written xy is the string formed by appending y to x.\n\n• For example:\n\nx = dog y = house xy = doghouse • The empty string is the identity element under concatenation.\n\ni.e., s = s = s\n\nString Exponentiation • Define 𝑠0 to be and for i>0 define 𝑠𝑖to be 𝑠𝑖−1 s.\n\n• Since s is s itself, 𝑠1 = s Then 𝑠2 = ss 𝑠3 = sss and so on\n\nExample Let L be the set {A, B, ..,Z ,a ,b ,…z} and D the set {0, 1, …9} 1. L U D is the set of letters and digits.\n\n2. L D is the set of strings consisting of a letter followed by a digit.\n\n3. 𝐿4 is the set of all four letter strings.\n\n4. 𝐿∗is the set of all strings of letters including ɛ, the empty string.\n\n5. L (𝐿𝑈𝐷)∗is the set of all strings of letters and digits beginning with a letter.\n\n6. 𝐷+ is the set of all strings of one or more digits.\n\nAgenda of this Session • Finite Automata • Deterministic Finite Automata\n\nFinite State Automata • Finite automata is a machine that given an input, jumps through a series of states according to a transition function • It is a model of behaviour composed of states, transitions and actions • Finite state machines are widely used in • Modelling of application behaviour • Design of hardware digital systems • Software engineering • Study of computation and languages\n\nFinite State Automata (Cont..) • Finite automata is a mathematical model of a system with discrete inputs and outputs • It consists of a finite set of states and a set of transitions that occur on input symbols chosen from an alphabet set Σ • One of these states is called the initial state from where the automata begins.  There can be one or more final states.\n\n• Examples:\n\nOperation of an elevator Operation of a switch",
+      "word_count": 395,
+      "char_count": 2075,
+      "char_start": 4942,
+      "char_end": 7017,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 15
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c3",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 22,
+      "section": "General",
+      "chunk_index": 3,
+      "text": "Operation of an elevator Operation of a switch\n\nTypes of Finite Automata 1. Deterministic Finite Automata (DFA) 2. Non-Deterministic Finite Automata (NFA) Difference between DFA and NFA Deterministic Finite Automata Non Deterministic Finite Automata From each state, for each symbol, there is exactly one transition From each state, for each input symbol, we can have 0 or more transitions No ε-transitions ε-transitions are allowed\n\nPicturization of Finite Automata • A finite automata can be picturized as a finite control which is in some state from Q, reading a sequence of symbols from Σ written on a tape as shown below • In one move, the finite automata does the following:\n\n1. Reads an input symbol 2. Moves its head one position to the right 3. Moves to a state as defined by δ\n\nDeterministic Finite Automata The finite automata model that allows exactly one transition from a state on an input symbol is called Deterministic Finite Automata (DFA) An input string is accepted by a DFA if it reaches one of the final states on reading the input string Example:\n\nDesign a DFA to accept strings that start with a and end with b over Σ = { a, b } Transition Diagram Transition Table\n\nFormal Definition of a Finite Automata A finite automata can be formally denoted by a five-tuple ( Q, Σ, δ, q0, F ) where Q →  set of states Σ → input alphabet δ → transition function : Q X ∑ → Q q0 → initial state F → set of final states, , F ⊆Q Formal definition of this automata is ( { q0, q1, q2, q3 }, { a, b }, δ, q0, {q2} ) where δ is defined as δ ( q0 , a ) = q1 δ ( q0 , b ) = q3 δ ( q1 , a ) = q1 δ ( q1 , b ) = q2 δ ( q2 , a ) = q1 δ ( q2 , b ) = q2 δ ( q3 , a ) = q3 δ ( q3 , b ) = q3 EXAMPLE\n\nExamples : DFA 1. Design a DFA that accepts strings that start with a over Σ = { a , b }\n\nExamples : DFA 2. Design a DFA that accepts strings that end with b over Σ = { a , b }\n\nExamples : DFA 3. Design a DFA that accepts strings that start with a and end with b over Σ = { a , b }",
+      "word_count": 422,
+      "char_count": 1976,
+      "char_start": 7019,
+      "char_end": 8995,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 22
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c4",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 29,
+      "section": "General",
+      "chunk_index": 4,
+      "text": "Examples : DFA 3. Design a DFA that accepts strings that start with a and end with b over Σ = { a , b }\n\nAcceptance of input strings by DFA • A string is accepted by a DFA if and only if the DFA starting at the initial state ends in an accepting state after reading the string • The language accepted by a DFA is the set of all strings accepted by the DFA Example:\n\nCheck whether the string 101101 is accepted by the DFA given below.  Also find the language accepted by the DFA.\n\nAcceptance of string δ ( q0 , 101101 ) = δ ( q3 , 01101 ) = δ ( q2 , 1101 ) = δ ( q1 , 101 ) = δ ( q2 , 01 ) = δ ( q3 , 1 ) = q0 On reading the input 101101, the DFA ends in the final state q0.  Hence the input is accepted.\n\nLanguage Accepted by the DFA Set of all binary strings with even number of 0s and 1s 0\n\nAgenda of this Session • Non-Deterministic Finite Automata\n\nNon-Deterministic Finite Automata • The finite automata model that allows 0 or 1 or more transitions from a state on an input symbol is called Non- Deterministic Finite Automata (NFA) • As NFA allows more than one transition from a state, at any time, the finite control can be in any number of states.\n\n• When a choice of next state is made, we can imagine that duplicate copies of the automata are made • An input string will be accepted by a NFA if there is at least one path that ends in a final state Example:\n\nDesign a NFA to accept strings that start with a and end with b over Σ = { a, b } Transition Diagram Transition Table\n\nFormal Definition of Finite Automata A finite automata can be formally denoted by a five-tuple ( Q, Σ, δ, q0, F ) where Q →  set of states Σ → input alphabet δ → transition function  Q X ∑ → P(Q) where P(Q) is the power set of Q q0 → initial state F → set of final states, F ⊆Q Formal definition of this automata is ( { q0, q1, q2 }, { a, b }, δ, q0, {q2} ) where δ is defined as δ ( q0 , a ) = q1 δ ( q0 , b ) = Φ δ ( q1 , a ) = q1 δ ( q1 , b ) = { q1, q2 } δ ( q2 , a ) = Φ δ ( q2 , b ) =Φ EXAMPLE",
+      "word_count": 448,
+      "char_count": 1987,
+      "char_start": 8997,
+      "char_end": 10984,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 29
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c5",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 33,
+      "section": "General",
+      "chunk_index": 5,
+      "text": ", b ) = Φ δ ( q1 , a ) = q1 δ ( q1 , b ) = { q1, q2 } δ ( q2 , a ) = Φ δ ( q2 , b ) =Φ EXAMPLE\n\nExamples : NFA 1. Design a NFA that accepts strings that end with b over Σ = { a , b }\n\nExamples : NFA 2. Design a NFA that accepts strings that start with a and end with b over Σ = { a , b }\n\nExamples : NFA 3. Design a NFA that accepts strings that end with 00 over Σ = { 0 , 1 }\n\nAcceptance of input strings by NFA • An input string will be accepted by a NFA if there is at least one path that ends in a final state • The language accepted by a NFA is the set of all strings accepted by the NFA Example:\n\nCheck whether the string 00111 is accepted by the NFA given below.  Also find the language accepted by the NFA.\n\nLanguage Accepted by the NFA Set of all binary strings with any number of 0s followed by any number of 1s Acceptance of string δ ( q0 , 00111 )  = δ ( { q0 , q1 } , 0111 ) = δ ( { q0 , q1 } , 111 ) = δ ( { q1 , q2 } , 11 ) = δ ( { q1 , q2 } , 1 ) = { q1 , q2 }\n\nSimulation of NFA - Acceptance of input strings by NFA Example:\n\nFind the language accepted by the given NFA and simulate the given NFA for the input ababb Language Accepted by the NFA Set of all strings over Σ={ a, b } that start and end with different symbols Acceptance of string δ ( q0 , ababb )  = δ ( { q1 } , babb ) = δ ( { q1 , q3 } , abb ) = δ ( { q1 } , bb ) = δ ( { q1 , q3 } , b ) = { q1 , q3 }\n\nAgenda of this Session • Finite Automaton with €- moves\n\nNFA with ε-moves • ε is a character used to indicate null string • A transition on ε means we can move from one state to another without reading any input Example:\n\nTransition Diagram Transition Table Language Accepted Set of all strings over Σ = { 0, 1, 2 } having any number of 0’s followed by any number of 1’s followed by any number of 2’s",
+      "word_count": 438,
+      "char_count": 1786,
+      "char_start": 10986,
+      "char_end": 12772,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 33
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c6",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 40,
+      "section": "General",
+      "chunk_index": 6,
+      "text": "Transition Diagram Transition Table Language Accepted Set of all strings over Σ = { 0, 1, 2 } having any number of 0’s followed by any number of 1’s followed by any number of 2’s\n\nFormal Definition of Finite Automata A finite automata can be formally denoted by a five-tuple ( Q, Σ, δ, q0, F ) where Q →  set of states Σ → input alphabet δ → transition function  Q X (∑ U {ε} )  → P(Q) where P(Q) is the power set of Q q0 → initial state F → set of final states, F ⊆Q EXAMPLE Formal definition of this automata is ( { q0, q1, q2 }, { 0, 1 }, δ, q0, {q2} ) where δ is defined as δ(q0,ε)=q1    δ(q0,0)=q0     δ(q0,1)=Φ δ(q0,2)=Φ δ(q1,ε)=q2    δ(q1,0)= Φ δ(q1,1)=q1    δ(q1,2)=Φ δ(q2,ε)= Φ δ(q2,0)= Φ δ(q2,1)=Φ δ(q2,2)=q2\n\nProblems related to NFA with ε-moves 1. Design a NFA with ε to accept binary strings having even number of 0’s or even number of 1’s\n\nProblems related to NFA with ε-moves 2. Design a NFA with ε to accept strings over ∑={a} such that w = { an | n is even or divisible by 3 }\n\nAgenda of this Session • Problems related to Finite Automaton with and without €- moves\n\nProblems related to DFA and NFA For the DFA given below a) Find the language accepted by the DFA b) Write the formal definition c) Draw the transition table d) Check whether the strings 10010 is accepted by the DFA\n\nProblems related to NFA with ε-moves 9. Design a NFA to accept all binary strings with at least two 0’s or exactly two 1’s (Can have ε-transitions)\n\nAgenda of this Session • Equivalence of NFA with epsilon and DFA\n\nNFA with ε-moves to DFA THEOREM:  If a language L is accepted by a nondeterministic finite automaton with ε-transition, then there exists a deterministic finite automaton that accepts L.\n\nExample 1 Convert the ε-NFA given below to a DFA Transition table of the given NFA Step 1:\n\nFind ε-closure for all the states ε-closure (A) = { A, B, C } ε-closure (B) = { B, C } ε-closure (C) = { C } Step 2:\n\nε-closure of initial state of the NFA is the new initial state of the DFA ε-closure (A) = { A, B, C }  --q0 (initial state) From the new initial state q0. find the transitions for the inputs 0 and 1.  If we get new states, from the new states find transitions….\n\nε 0 1 A B {B,C} A B C - B C - C C",
+      "word_count": 435,
+      "char_count": 2210,
+      "char_start": 12774,
+      "char_end": 14984,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 40
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c7",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 51,
+      "section": "1\nA\nB",
+      "chunk_index": 7,
+      "text": "ε 0 1 A B {B,C} A B C - B C - C C\n\nExample 1 – cont… Transition table of the given NFA ε-closure (A) = { A, B, C } ε-closure (B) = { B, C } ε-closure (C) = { C } Let δ’ be the transition function of the DFA δ’ ( q0, 0 ) = ε-closure ( δ ( q0, 0 ) ) = ε-closure (δ ( {A,B,C} , 0 ) ) = ε-closure (B,C) = ε-closure (B) U ε-closure(C) = {B,C} ------ q1 δ’ ( q0, 1 ) = ε-closure ( δ ( q0, 1 ) ) = ε-closure (δ ( {A,B,C} , 1 ) ) = ε-closure (A,B,C) = ε-closure (A) U ε-closure(B) U ε-closure(C) = {A,B,C} ------ q0 ε 0 1 A B {B,C} A B C - B C - C C\n\nExample 1 – cont… Transition table of the given NFA ε-closure (A) = { A, B, C } ε-closure (B) = { B, C } ε-closure (C) = { C } δ’ ( q1, 0 ) = ε-closure ( δ ( q1, 0 ) ) = ε-closure (δ ( {B,C} , 0 ) ) = ε-closure (C) = {C} ------ q2 δ’ ( q1, 1 ) = ε-closure ( δ ( q1, 1 ) ) = ε-closure (δ ( {B,C} , 1 ) ) = ε-closure (B,C) = ε-closure(B) U ε-closure(C) = {B,C} ------ q1 ε 0 1 A B {B,C} A B C - B C - C C\n\nExample 1 – cont… Transition table of the given NFA ε-closure (A) = { A, B, C } ε-closure (B) = { B, C } ε-closure (C) = { C } δ’ ( q2, 0 ) = ε-closure ( δ ( q2, 0 ) ) = ε-closure (δ ( {C} , 0 ) ) = ε-closure (C) = {C} ------ q2 δ’ ( q2, 1 ) = ε-closure ( δ ( q2, 1 ) ) = ε-closure (δ ( {C} , 1 ) ) = ε-closure (C) = {C} ------ q2 ε 0 1 A B {B,C} A B C - B C - C C\n\nExample 1 – cont… Transition table of the DFA Transition Diagram 0 1 q0 q1 q0 q1 q2 q1 q2 q2 q2\n\nExample 2 Convert the ε-NFA given below to a DFA Transition table of the given NFA ε a b c 1 {2,9} - - - 2 {3,6} - - - 3 - 4 - - 4 - - 5 - 5 8 - - - 6 - - - 7 7 8 - - - 8 {2,9} - - - 9 - - - - 3\n\nExample 2 – cont..",
+      "word_count": 450,
+      "char_count": 1624,
+      "char_start": 14986,
+      "char_end": 16610,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 51
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c8",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 56,
+      "section": "1\nA\nB",
+      "chunk_index": 8,
+      "text": "Example 2 – cont..\n\nThe given NFA Step 1:\n\nFind ε-closure for all the states ε-closure (1) = { 1, 2, 3, 6 } ε-closure (2) = { 2, 3, 6 } ε-closure (3) = { 3 } ε-closure (4) = { 4 } ε-closure (5) = { 5, 8, 2, 3, 6, 9 } ε-closure (6) = { 6 } ε-closure (7) = { 7, 8, 2, 3, 6, 9 } ε-closure (8) = { 8, 2, 3, 6, 9 } ε-closure (9) = { 9 } 3\n\nExample 2 – cont..\n\nTransition table of the given NFA Let δ’ be the transition function of the DFA δ’ ( A, a ) = ε-closure ( δ (A, a ) ) = ε-closure (δ ( {1,2,3,6} , a ) ) = ε-closure (4) = { 4 } ------ B δ’ ( A, b ) = ε-closure ( δ (A, b ) ) = ε-closure (δ ( {1,2,3,6} , b ) ) = ε-closure ( Φ ) = Φ δ’ ( A, c ) = ε-closure ( δ (A, c ) ) = ε-closure (δ ( {1,2,3,6} , c ) ) = ε-closure (7) = { 7, 8, 2, 3, 6, 9 } ------ C ε a b c 1 {2,9} - - - 2 {3,6} - - - 3 - 4 - - 4 - - 5 - 5 8 - - - 6 - - - 7 7 8 - - - 8 {2,9} - - - 9 - - - -\n\nExample 2 – cont..\n\nTransition table of the given NFA δ’ ( B, a ) = ε-closure ( δ (B, a ) ) = ε-closure (δ ( {4} , a ) ) = ε-closure (Φ) = Φ δ’ ( B, b ) = ε-closure ( δ (B, b ) ) = ε-closure (δ ( {4} , b ) ) = ε-closure ( 5 ) = { 5, 8, 2, 3, 6, 9 } ------- D δ’ ( B, c ) = ε-closure ( δ (B, c ) ) = ε-closure (δ ( {4} , c ) ) = ε-closure (Φ) = Φ ε a b c 1 {2,9} - - - 2 {3,6} - - - 3 - 4 - - 4 - - 5 - 5 8 - - - 6 - - - 7 7 8 - - - 8 {2,9} - - - 9 - - - -\n\nExample 2 – cont..",
+      "word_count": 408,
+      "char_count": 1342,
+      "char_start": 16612,
+      "char_end": 17954,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 56
+      }
+    },
+    {
+      "chunk_id": "FLA-Unit 1.pdf_c9",
+      "document_name": "FLA-Unit 1.pdf",
+      "page_number": 59,
+      "section": "1\nA\nB",
+      "chunk_index": 9,
+      "text": "Example 2 – cont..\n\nTransition table of the given NFA δ’ ( C, a ) = ε-closure ( δ (C, a ) ) = ε-closure (δ ( {7,8,2,3,6,9} , a ) ) = ε-closure (4) = { 4 } ------ B δ’ ( C, b ) = ε-closure ( δ (C, b ) ) = ε-closure (δ ( {7,8,2,3,6,9} , b ) ) =  ε-closure (Φ) = Φ δ’ ( C, c ) = ε-closure ( δ (C, c ) ) = ε-closure (δ ( {7,8,2,3,6,9} , c ) ) = ε-closure (7) = { 7, 8, 2, 3, 6, 9 } ------ C ε a b c 1 {2,9} - - - 2 {3,6} - - - 3 - 4 - - 4 - - 5 - 5 8 - - - 6 - - - 7 7 8 - - - 8 {2,9} - - - 9 - - - -\n\nExample 2 – cont..\n\nTransition table of the given NFA δ’ ( D, a ) = ε-closure ( δ (D, a ) ) = ε-closure (δ ( {5,8,2,3,6,9} , a ) ) = ε-closure (4) = { 4 } ------ B δ’ ( D, b ) = ε-closure ( δ (D, b ) ) = ε-closure (δ ( {5,8,2,3,6,9} , b ) ) =  ε-closure (Φ) = Φ δ’ ( D, c ) = ε-closure ( δ (D, c ) ) = ε-closure (δ ( {5,8,2,3,6,9} , c ) ) = ε-closure (7) = { 7, 8, 2, 3, 6, 9 } ------ C ε a b c 1 {2,9} - - - 2 {3,6} - - - 3 - 4 - - 4 - - 5 - 5 8 - - - 6 - - - 7 7 8 - - - 8 {2,9} - - - 9 - - - -\n\nExample 2 – cont… Transition table of the DFA Transition Diagram a b c A B - C B - D - C B - C D B - C",
+      "word_count": 336,
+      "char_count": 1098,
+      "char_start": 17956,
+      "char_end": 19054,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 59
+      }
+    }
+  ]
+}
