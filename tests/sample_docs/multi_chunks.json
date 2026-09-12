@@ -1,0 +1,47 @@
+{
+  "document_name": "multilingual_doc.txt",
+  "document_type": "txt",
+  "file_size_bytes": 784,
+  "processed_at": "2026-09-12T22:22:08.838768",
+  "total_pages": 1,
+  "native_text_pages": 1,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 404,
+  "average_chunk_words": 61.0,
+  "average_chunk_chars": 404.0,
+  "primary_language": "ta",
+  "detected_languages": [
+    "ta",
+    "hi",
+    "en"
+  ],
+  "language_breakdown": {
+    "ta": 37.6,
+    "hi": 35.8,
+    "en": 26.6
+  },
+  "language_summary": "Tamil (ta) — 38%, Hindi (hi) — 36%, English (en) — 27%",
+  "is_multilingual": true,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "multilingual_doc.txt_c0",
+      "document_name": "multilingual_doc.txt",
+      "page_number": 1,
+      "section": "Section 1",
+      "chunk_index": 0,
+      "text": "# Section 1: English Introduction This project evaluates offline edge document intelligence without cloud APIs.\n\n# Section 2: Hindi Documentation यह प्रणाली हिंदी भाषा में भी सटीक संदर्भ निकालने में सक्षम है। इसमें स्थानीय एल्गोरिदम का उपयोग किया गया है। # Section 3: Tamil & Telugu Sections இந்த அமைப்பு தமிழ் ஆவணங்களை நேரடியாக செயலாக்குகிறது.\n\nఈ వ్యవస్థ తెలుగు పత్రాలను కూడా సజావుగా ప్రాసెస్ చేస్తుంది.",
+      "word_count": 61,
+      "char_count": 404,
+      "char_start": 0,
+      "char_end": 404,
+      "language": "hi",
+      "source_type": "txt",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "document_name": "research_report.txt",
+  "document_type": "txt",
+  "file_size_bytes": 5799,
+  "processed_at": "2026-09-12T22:22:48.248824",
+  "total_pages": 3,
+  "native_text_pages": 3,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 5768,
+  "average_chunk_words": 76.0,
+  "average_chunk_chars": 1494.0,
+  "primary_language": "tl",
+  "detected_languages": [
+    "tl",
+    "de",
+    "en"
+  ],
+  "language_breakdown": {
+    "tl": 40.2,
+    "de": 34.3,
+    "en": 25.4
+  },
+  "language_summary": "TL (tl) — 40%, German (de) — 34%, English (en) — 25%",
+  "is_multilingual": true,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "research_report.txt_c0",
+      "document_name": "research_report.txt",
+      "page_number": 1,
+      "section": "General",
+      "chunk_index": 0,
+      "text": "Project Overview: Offline Multilingual Self-Verifying RAG Antigravity Labs was founded in 2021 to pioneer edge-native document AI.\n\nThe project handles long, heterogeneous technical documents.\n\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Experimental Evaluation Results:\n\nIn Experiment 4B, the hybrid retrieval mechanism improved recall by 28.5% over basic dense retrieval.\n\nThe evaluation was conducted on 500 multi-hop benchmark queries across English and Hindi.\n\nBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB Deployment Specifications:\n\nThe offline edge model uses 3.2 billion parameters and runs locally via Ollama without any cloud APIs.",
+      "word_count": 76,
+      "char_count": 1494,
+      "char_start": 0,
+      "char_end": 1494,
+      "language": "en",
+      "source_type": "txt",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    }
+  ]
+}

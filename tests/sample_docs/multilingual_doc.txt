@@ -1,0 +1,9 @@
+# Section 1: English Introduction
+This project evaluates offline edge document intelligence without cloud APIs.
+
+# Section 2: Hindi Documentation
+यह प्रणाली हिंदी भाषा में भी सटीक संदर्भ निकालने में सक्षम है। इसमें स्थानीय एल्गोरिदम का उपयोग किया गया है।
+
+# Section 3: Tamil & Telugu Sections
+இந்த அமைப்பு தமிழ் ஆவணங்களை நேரடியாக செயலாக்குகிறது.
+ఈ వ్యవస్థ తెలుగు పత్రాలను కూడా సజావుగా ప్రాసెస్ చేస్తుంది.

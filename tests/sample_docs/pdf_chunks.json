@@ -1,0 +1,43 @@
+{
+  "document_name": "research_paper.pdf",
+  "document_type": "pdf",
+  "file_size_bytes": 2993,
+  "processed_at": "2026-09-12T22:22:08.721690",
+  "total_pages": 3,
+  "native_text_pages": 3,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 1741,
+  "average_chunk_words": 243.0,
+  "average_chunk_chars": 1754.0,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "research_paper.pdf_c0",
+      "document_name": "research_paper.pdf",
+      "page_number": 1,
+      "section": "General",
+      "chunk_index": 0,
+      "text": "Multilingual Document Intelligence: A Comprehensive Study Authors: Dr. A. Sharma, Dr. R. Ramanujan, Dr. V. Rao Affiliation: Edge Computing & Language AI Lab 1. Introduction Long-document question answering poses severe challenges for offline edge deployments.\n\nIn many production environments, access to cloud-based APIs is restricted due to privacy and compliance regulations. This paper introduces an offline framework for long, heterogeneous documents across multiple languages including English, Hindi, Tamil, and Telugu.\n\n2. Related Work Standard dense retrieval pipelines frequently suffer from cross-lingual misalignment and lack of faithful page-grounded attribution.\n\n3. Experimental Methodology & Architecture We deployed an offline embedding model combined with a local 3.2 billion parameter language model.\n\nAll vector indexing was handled via FAISS IndexFlatIP to ensure normalized cosine similarity.\n\nKey Benchmark Results (Experiment 4B):\n\n- Baseline Dense Retrieval Recall: 64.2% - Proposed Hybrid Framework Recall: 92.7% - Net Relative Improvement: 28.5% improvement in retrieval recall over naive dense search.\n\n- Average Inference Latency: 1.4 seconds per query on 16GB CPU architecture.\n\nThe experiments were replicated across 500 multi-hop queries.\n\n4. Edge Hardware Deployment & Conclusion The entire system was benchmarked on standard consumer hardware equipped with 16 GB of RAM and integrated Intel Iris Xe graphics. Zero cloud APIs were queried during evaluation.\n\n5. Reproducibility & Open Source The model weights for Qwen 2.5 3B were quantized in Q4_K_M format, requiring exactly 2.0 GB of RAM.\n\nIn conclusion, self-verifying local RAG demonstrates high citation fidelity and eliminates hallucinations on unsupported queries.",
+      "word_count": 243,
+      "char_count": 1754,
+      "char_start": 0,
+      "char_end": 1754,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    }
+  ]
+}
