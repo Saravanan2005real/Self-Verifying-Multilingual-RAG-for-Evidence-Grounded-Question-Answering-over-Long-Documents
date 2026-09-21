@@ -1,0 +1,43 @@
+{
+  "document_name": "test_09_heading.docx",
+  "document_type": "docx",
+  "file_size_bytes": 36683,
+  "processed_at": "2026-09-21T20:59:32.562427",
+  "total_pages": 1,
+  "native_text_pages": 1,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 126,
+  "average_chunk_words": 17.0,
+  "average_chunk_chars": 126.0,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "test_09_heading.docx_c0",
+      "document_name": "test_09_heading.docx",
+      "page_number": 1,
+      "section": "Section 4: System Architecture",
+      "chunk_index": 0,
+      "text": "Section 4: System Architecture\n\nThe system architecture incorporates a local vector database and an offline transformer model.",
+      "word_count": 17,
+      "char_count": 126,
+      "char_start": 0,
+      "char_end": 126,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    }
+  ]
+}

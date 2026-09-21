@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import html
 from pathlib import Path
 import streamlit as st
 
@@ -305,21 +306,23 @@ if st.session_state.processed_data is not None:
         st.caption(f"Showing {len(filtered_chunks)} of {len(chunks)} chunks matching '{filter_text}'")
 
     for c in filtered_chunks:
-        lang_label = f"{get_language_name(c['language'])} ({c['language']})"
-        section_label = c.get("section") or "General"
+        lang_label = html.escape(f"{get_language_name(c['language'])} ({c['language']})")
+        section_label = html.escape(str(c.get("section") or "General"))
+        chunk_id_clean = html.escape(str(c['chunk_id']))
+        escaped_chunk_text = html.escape(c['text'])
         ocr_flag = '<span class="badge badge-ocr">OCR Applied</span>' if c.get("ocr_applied") else ''
 
         st.markdown(f"""
         <div class="chunk-box">
             <div>
-                <span class="badge badge-id">ID: {c['chunk_id']}</span>
+                <span class="badge badge-id">ID: {chunk_id_clean}</span>
                 <span class="badge badge-page">📄 Page {c['page_number']}</span>
                 <span class="badge badge-section">🏷️ Section: {section_label}</span>
                 <span class="badge badge-lang">🌐 {lang_label}</span>
                 <span class="badge badge-id">{c['char_count']} chars (offset {c['char_start']}-{c['char_end']})</span>
                 {ocr_flag}
             </div>
-            <div class="chunk-text">{c['text']}</div>
+            <div class="chunk-text">{escaped_chunk_text}</div>
         </div>
         """, unsafe_allow_html=True)
 

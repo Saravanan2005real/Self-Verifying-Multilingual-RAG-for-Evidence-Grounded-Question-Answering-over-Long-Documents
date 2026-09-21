@@ -51,35 +51,89 @@ class DocumentChunk:
             "metadata": self.metadata,
         }
 
+# Multilingual sentence terminators including Indic, Arabic/Urdu, and East Asian scripts
+MULTILINGUAL_SENTENCE_TERMINATORS = (
+    ".", "?", "!", ":", ";",
+    "।", "॥",  # Devanagari danda and double danda (Hindi, Marathi, Nepali, etc.)
+    "؟", "۔",  # Arabic / Urdu question mark and full stop
+    "。", "！", "？",  # CJK full stop, exclamation, question mark
+)
+
+def normalize_native_text(text: str) -> str:
+    """
+    Normalize native text (PDF, DOCX, TXT) without destroying authentic paragraph boundaries.
+    Preserves double-newline paragraph separation and cleans scanner watermarks and whitespace.
+    """
+    if not text:
+        return ""
+    # Strip scanner stamps
+    t = re.sub(r"(?i)scanned\s+by\s+camscanner[^\n]*", "", text)
+    # Normalize Windows CRLF to standard LF
+    t = t.replace("\r\n", "\n").replace("\r", "\n")
+    # Clean UI artifacts if any leaked into text
+    t = re.sub(r"</?(?:div|span|p)[^>]*>", "", t)
+    # Split paragraphs by 2 or more newlines
+    raw_paras = re.split(r"\n\s*\n+", t)
+    clean_paras = []
+    for p in raw_paras:
+        p_str = p.strip()
+        if p_str:
+            # Normalize whitespace within paragraph lines while preserving single newlines if intentional
+            lines = [re.sub(r"[ \t]+", " ", line).strip() for line in p_str.split("\n")]
+            cleaned_p = "\n".join(l for l in lines if l)
+            if cleaned_p:
+                clean_paras.append(cleaned_p)
+    return "\n\n".join(clean_paras)
+
 def clean_and_normalize_ocr_text(text: str) -> str:
     """
     Reconstruct OCR line fragments into coherent sentences and paragraphs.
-    Strips scanner watermarks and repairs mid-sentence line wraps.
+    Strips scanner watermarks, respects existing paragraph breaks,
+    and supports multilingual sentence terminators.
     """
-    # Remove scanner stamps
-    text = re.sub(r"(?i)scanned\s+by\s+camscanner[^\n]*", "", text)
-
-    lines = [line.strip() for line in text.split("\n") if line.strip()]
-    if not lines:
+    if not text or not text.strip():
         return ""
 
-    paragraphs = []
-    current_para = []
+    # Remove scanner stamps
+    text = re.sub(r"(?i)scanned\s+by\s+camscanner[^\n]*", "", text)
+    text = re.sub(r"</?(?:div|span|p)[^>]*>", "", text)
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
 
-    for line in lines:
-        if not current_para:
-            current_para.append(line)
+    # If text already has double newlines (paragraphs), process block-by-block
+    blocks = re.split(r"\n\s*\n+", text)
+    reconstructed_blocks = []
+
+    for block in blocks:
+        lines = [line.strip() for line in block.split("\n") if line.strip()]
+        if not lines:
             continue
 
-        prev_line = current_para[-1]
-        # If previous line ends with sentence terminal (. ? ! :), start new line/paragraph
-        if prev_line and prev_line[-1] in (".", "?", "!", ":"):
-            current_para.append(line)
-        else:
-            # Join line wraps seamlessly
-            current_para[-1] = f"{prev_line} {line}"
+        current_para = []
+        for line in lines:
+            if not current_para:
+                current_para.append(line)
+                continue
 
-    return "\n\n".join(current_para)
+            prev_line = current_para[-1]
+            # Check if previous line ended with a sentence terminator
+            prev_ended = any(prev_line.endswith(term) for term in MULTILINGUAL_SENTENCE_TERMINATORS)
+            # Check if previous line ended with closing quote/bracket preceded by terminator
+            if not prev_ended and len(prev_line) >= 2 and prev_line[-1] in ('"', "'", "”", "’", ")", "]", "}", "»"):
+                prev_ended = any(prev_line[:-1].rstrip().endswith(term) for term in MULTILINGUAL_SENTENCE_TERMINATORS)
+
+            # Check if current line looks like an explicit heading or bullet point
+            is_heading_or_bullet = bool(re.match(r"^([•\-\*]|\d+(?:\.\d+)*\s+|#+\s*|[A-Z\u0900-\u0D7F\u0600-\u06FF]{2,}:)", line))
+
+            if prev_ended or is_heading_or_bullet:
+                current_para.append(line)
+            else:
+                # Join unwrapped line seamlessly
+                current_para[-1] = f"{prev_line} {line}"
+
+        if current_para:
+            reconstructed_blocks.append("\n".join(current_para))
+
+    return "\n\n".join(reconstructed_blocks)
 
 def resolve_chunk_language(
     text: str,
@@ -141,22 +195,29 @@ class MeaningfulSemanticChunker:
         # 1. Collect normalized paragraph units with their page attribution
         units: List[Dict[str, Any]] = []
         for page in pages:
-            normalized_content = clean_and_normalize_ocr_text(page.content)
+            # Use OCR reconstruction only for OCR pages; preserve native paragraph formatting for native pages
+            if page.metadata.get("ocr_applied", False) or page.source_type == "scanned_pdf_ocr":
+                normalized_content = clean_and_normalize_ocr_text(page.content)
+            else:
+                normalized_content = normalize_native_text(page.content)
+
             if not normalized_content.strip():
                 continue
 
             # Split by double newline into cohesive paragraphs
-            paras = [p.strip() for p in re.split(r"\n\s*\n", normalized_content) if p.strip()]
+            paras = [p.strip() for p in re.split(r"\n\s*\n+", normalized_content) if p.strip()]
             for p in paras:
-                # Skip tiny noise fragments that lack alphabetic content
-                words = p.split()
-                if len(words) < 2 or sum(1 for c in p if c.isalpha()) < 3:
+                # Skip only empty or purely non-alphanumeric noise fragments (e.g. '___', '---')
+                if not any(c.isalnum() for c in p):
                     continue
 
-                # Detect inline headings
+                words = p.split()
+
+                # Detect inline headings supporting universal Unicode scripts
                 heading_match = re.search(
-                    r"(?:^|\n)(?:#+\s*|(?:\d+(\.\d+)*\s+)|(?:UNIT\s+[IVXLCDM]+))([A-Z\u0900-\u0D7F][^\n:]{2,50})(?::|\n|$)",
-                    p
+                    r"(?:^|\n)(?:#+\s*|(?:\d+(?:\.\d+)*\s+)|(?:UNIT\s+[IVXLCDM]+))([^\W\d_][^\n:]{2,60})(?::|\n|$)",
+                    p,
+                    re.UNICODE
                 )
                 unit_section = heading_match.group(0).strip("# \n:").strip() if heading_match else page.section
                 units.append({
@@ -190,6 +251,9 @@ class MeaningfulSemanticChunker:
                 return
 
             full_chunk_text = "\n\n".join(current_unit_texts).strip()
+            # Clean any leaked UI HTML tags from chunk text
+            full_chunk_text = re.sub(r"</?(?:div|span|p)[^>]*>", "", full_chunk_text).strip()
+
             total_words = len(full_chunk_text.split())
             total_chars = len(full_chunk_text)
 
@@ -245,13 +309,21 @@ class MeaningfulSemanticChunker:
                 current_page_number = u_page
                 current_section = u_section
 
-            # If unit itself exceeds max_words, split by sentences
+            # If unit itself exceeds max_words, split by sentences without loss
             if u_words > self.max_words:
-                sentences = [s.strip() for s in re.split(r"(?<=[.!?।])\s+", u_text) if s.strip()]
+                sentences = [s.strip() for s in re.split(r"(?<=[.!?।॥؟۔。！？])\s+", u_text) if s.strip()]
+                # If no sentence boundaries were detected, split into word chunks
+                if len(sentences) <= 1:
+                    words_list = u_text.split()
+                    sub_chunks = []
+                    step = self.target_words
+                    for wi in range(0, len(words_list), step):
+                        sub_chunks.append(" ".join(words_list[wi:wi + step]))
+                    sentences = sub_chunks
+
                 for s in sentences:
                     s_words = len(s.split())
                     if current_word_count + s_words > self.target_words and current_word_count >= self.min_words:
-                        # Extract overlap
                         overlap_str = " ".join(current_unit_texts[-1].split()[-self.overlap_words:]) if current_unit_texts else ""
                         emit_current_chunk(overlap_suffix=overlap_str)
                         current_page_number = u_page
@@ -286,7 +358,9 @@ class MeaningfulSemanticChunker:
             if remaining_words < 100 and chunks:
                 # Merge into last chunk
                 prev = chunks[-1]
-                merged_text = prev.text + "\n\n" + "\n\n".join(current_unit_texts)
+                remaining_text = "\n\n".join(current_unit_texts)
+                remaining_text = re.sub(r"</?(?:div|span|p)[^>]*>", "", remaining_text).strip()
+                merged_text = prev.text + "\n\n" + remaining_text
                 prev.text = merged_text
                 prev.word_count = len(merged_text.split())
                 prev.char_count = len(merged_text)

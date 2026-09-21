@@ -1,0 +1,43 @@
+{
+  "document_name": "test_01_tirupati.docx",
+  "document_type": "docx",
+  "file_size_bytes": 36957,
+  "processed_at": "2026-09-21T20:59:32.086908",
+  "total_pages": 1,
+  "native_text_pages": 1,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 614,
+  "average_chunk_words": 88.0,
+  "average_chunk_chars": 614.0,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "test_01_tirupati.docx_c0",
+      "document_name": "test_01_tirupati.docx",
+      "page_number": 1,
+      "section": "1. Introduction and Objectives",
+      "chunk_index": 0,
+      "text": "1. Introduction and Objectives\n\nThis study focuses on analyzing temporal changes in surface water bodies in Tirupati using satellite-based remote sensing techniques. Rapid urbanization and climate variability have significantly impacted water resources in Tirupati over the past decade. Monitoring these changes is essential for sustainable urban planning and water resource management.\n\nIn this work, Google Earth Engine is used to access and process Sentinel-2 imagery for the years 2021 to 2025. The Normalized Difference Water Index (NDWI) is computed to detect and analyze water bodies across different years.",
+      "word_count": 88,
+      "char_count": 614,
+      "char_start": 0,
+      "char_end": 614,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    }
+  ]
+}

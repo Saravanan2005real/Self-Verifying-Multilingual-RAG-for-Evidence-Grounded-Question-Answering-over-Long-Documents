@@ -1,0 +1,43 @@
+{
+  "document_name": "test_02_tamil.docx",
+  "document_type": "docx",
+  "file_size_bytes": 36962,
+  "processed_at": "2026-09-21T20:59:32.138829",
+  "total_pages": 1,
+  "native_text_pages": 1,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 360,
+  "average_chunk_words": 40.0,
+  "average_chunk_chars": 360.0,
+  "primary_language": "ta",
+  "detected_languages": [
+    "ta"
+  ],
+  "language_breakdown": {
+    "ta": 100.0
+  },
+  "language_summary": "Tamil (ta)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "test_02_tamil.docx_c0",
+      "document_name": "test_02_tamil.docx",
+      "page_number": 1,
+      "section": "தமிழ் மொழியின் சிறப்பும் வரலாறும்",
+      "chunk_index": 0,
+      "text": "தமிழ் மொழியின் சிறப்பும் வரலாறும்\n\nதமிழ் உலகின் மிகத் தொன்மையான செம்மொழிகளில் ஒன்றாகும். ஆயிரக்கணக்கான ஆண்டுகளாகத் தொடர்ந்து பேசப்பட்டும் எழுதப்பட்டும் வரும் தனித்துவமான மொழி இதுவாகும்.\n\nதமிழ் இலக்கியங்கள் மனித வாழ்வின் பண்பாடு, அறநெறி மற்றும் தத்துவங்களை ஆழமாகப் பதிவு செய்துள்ளன. சங்க இலக்கியம் முதல் நவீன இலக்கியம் வரை தமிழ் காலந்தோறும் வளர்ந்து வந்துள்ளது.",
+      "word_count": 40,
+      "char_count": 360,
+      "char_start": 0,
+      "char_end": 360,
+      "language": "ta",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    }
+  ]
+}
