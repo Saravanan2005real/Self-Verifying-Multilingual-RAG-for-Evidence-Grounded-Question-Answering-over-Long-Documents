@@ -1,0 +1,43 @@
+{
+  "document_name": "test_03_hindi.docx",
+  "document_type": "docx",
+  "file_size_bytes": 36946,
+  "processed_at": "2026-09-21T20:59:32.197698",
+  "total_pages": 1,
+  "native_text_pages": 1,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 300,
+  "average_chunk_words": 56.0,
+  "average_chunk_chars": 300.0,
+  "primary_language": "hi",
+  "detected_languages": [
+    "hi"
+  ],
+  "language_breakdown": {
+    "hi": 100.0
+  },
+  "language_summary": "Hindi (hi)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "test_03_hindi.docx_c0",
+      "document_name": "test_03_hindi.docx",
+      "page_number": 1,
+      "section": "हिंदी भाषा और उसका महत्व",
+      "chunk_index": 0,
+      "text": "हिंदी भाषा और उसका महत्व\n\nहिंदी भारत की प्रमुख भाषाओं में से एक है। यह केवल संवाद का माध्यम नहीं, बल्कि भारतीय संस्कृति, साहित्य और सामाजिक जीवन की महत्वपूर्ण कड़ी है।\n\nहिंदी का विकास लंबे ऐतिहासिक क्रम से हुआ है। संस्कृत, प्राकृत और अपभ्रंश से होते हुए यह आधुनिक खड़ी बोली के रूप में प्रतिष्ठित हुई।",
+      "word_count": 56,
+      "char_count": 300,
+      "char_start": 0,
+      "char_end": 300,
+      "language": "hi",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    }
+  ]
+}

@@ -121,66 +121,55 @@ COMMON_OCR_CORRECTIONS = [
 def is_readable_ocr_line(line: str) -> bool:
     """
     Verify that an OCR line contains readable prose rather than pure mathematical formula soup.
-    A readable line must contain genuine words (at least one word >= 4 letters or two words >= 3 letters)
-    and cannot be purely matrix variable equations (e.g., R13 + R32 = ...).
+    Supports multilingual text including English, Indic, Arabic/Urdu, and CJK scripts.
     """
     line = line.strip()
-    if len(line) < 3:
+    if len(line) < 2:
         return False
 
     alphas = [c for c in line if c.isalpha()]
-    if len(alphas) < 3:
+    if len(alphas) < 2:
         return False
 
-    # Discard pure matrix variable formulas (e.g. lines that have '+' or '=' and no long words)
-    long_words = re.findall(r"\b[a-zA-Z]{4,}\b", line)
-    med_words = re.findall(r"\b[a-zA-Z]{3,}\b", line)
-
+    # Discard pure matrix variable formulas (e.g. lines that have '+' or '=' and no real words)
+    long_words = re.findall(r"\b[^\W\d_]{3,}\b", line, re.UNICODE)
     has_math = bool(re.search(r"[\+\*\=\/]", line))
-    # If it has math symbols but no real English words of length >= 4, it's formula soup
-    if has_math and len(long_words) == 0:
+    if has_math and len(long_words) == 0 and len(alphas) < 6:
         return False
 
-    # Must have either at least 1 word of 4+ letters or 2 words of 3+ letters
-    if len(long_words) >= 1 or len(med_words) >= 2:
-        return True
-
-    return False
+    return True
 
 def sanitize_ocr_text(raw_text: str) -> str:
     """
-    Cleans raw OCR output:
-    - Removes Chinese/Japanese/Korean/Cyrillic hallucinations on sketches
+    Cleans raw OCR output while strictly preserving multilingual text:
     - Strips scanner watermark tokens
     - Fixes frequent OCR confusions for academic/technical terms
     - Strips diagram arrow equation labels (e.g., R12 + Q1S*P2)
-    - Retains coherent prose while filtering pure formula noise
+    - Retains coherent prose and all valid Unicode characters across languages
     """
     if not raw_text or not raw_text.strip():
         return ""
 
-    # 1. Remove non-Latin character sets (hallucinations from PP-OCR on non-text lines)
-    t = re.sub(r"[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af\u0600-\u06ff\u0400-\u04ff]", " ", raw_text)
-    # 2. Remove scanner watermarks
-    t = re.sub(r"(?i)scanned\s+by\s+camscanner[^\n]*", "", t)
-    # 3. Strip graph arrow matrix algebraic soup
+    # 1. Remove scanner watermarks
+    t = re.sub(r"(?i)scanned\s+by\s+camscanner[^\n]*", "", raw_text)
+    # 2. Strip graph arrow matrix algebraic soup
     t = re.sub(r"\b[A-Z]\d+[\+\*][A-Za-z0-9\+\*]*\b", " ", t)
-    # 4. Apply domain and handwriting corrections
+    # 3. Apply domain and handwriting corrections
     for pat, repl in COMMON_OCR_CORRECTIONS:
         t = re.sub(pat, repl, t)
-    # 5. Filter noise characters (allow alphanumeric, standard punctuation, math operators)
-    t = re.sub(r"[^a-zA-Z0-9\s.,;:()\-–—'\"/=+\*<>_]", " ", t)
+    # 4. Remove unprintable control characters, but preserve all Unicode letters, digits, and punctuation
+    t = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]", " ", t)
 
-    # 6. Line-by-line quality validation
+    # 5. Line-by-line quality validation
     clean_lines = []
     for line in t.splitlines():
         line = re.sub(r"[ \t]+", " ", line).strip()
         if not is_readable_ocr_line(line):
             continue
-        # Strip isolated single characters (like stray ' d ', ' b ')
+        # Strip isolated stray single Latin characters (like stray ' d ', ' b ')
         line = re.sub(r"(?<!\S)[b-hj-zB-HJ-Z](?!\S)", " ", line)
         line = re.sub(r"[ \t]+", " ", line).strip()
-        if len(line) >= 3:
+        if len(line) >= 2:
             clean_lines.append(line)
 
     result = "\n".join(clean_lines).strip()

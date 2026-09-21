@@ -53,6 +53,7 @@ class DocumentLoader:
         """
         Evaluates whether raw text extracted via PyMuPDF is sufficient, usable readable text,
         or merely scanner watermarks / empty noise.
+        Supports multilingual and Indic scripts.
 
         Returns:
             (is_usable: bool, clean_text: str)
@@ -61,20 +62,22 @@ class DocumentLoader:
             return False, ""
 
         # Strip scanner watermarks (e.g., 'Scanned by CamScanner')
-        cleaned = re.sub(r"(?i)scanned\s+by\s+camscanner", "", raw_text).strip()
+        cleaned = re.sub(r"(?i)scanned\s+by\s+camscanner[^\n]*", "", raw_text).strip()
         if not cleaned:
             return False, ""
 
-        # Analyze lexical content
-        words = re.findall(r"\b[a-zA-Z0-9]{2,}\b", cleaned)
-        alpha_words = re.findall(r"\b[a-zA-Z]{2,}\b", cleaned)
-        total_chars = len(cleaned)
+        # Count Unicode letters and words
         letter_chars = sum(1 for c in cleaned if c.isalpha())
+        total_chars = len(cleaned)
         letter_ratio = letter_chars / total_chars if total_chars > 0 else 0.0
 
+        # Extract words consisting of Unicode letters/numbers
+        words = re.findall(r"\b[^\W_]{2,}\b", cleaned, re.UNICODE)
+
         # Criteria for sufficient readable native text:
-        # At least 5 readable alphabetic words, >= 25 characters, and >= 40% alphabetic letters
-        if len(alpha_words) >= 5 and total_chars >= 25 and letter_ratio >= 0.40:
+        # At least 10 alphabetic characters and >= 30% alphabetic ratio,
+        # or at least 2 words with >= 8 alphabetic characters.
+        if (letter_chars >= 10 and letter_ratio >= 0.30) or (len(words) >= 2 and letter_chars >= 8):
             return True, cleaned
 
         return False, cleaned
@@ -160,8 +163,8 @@ class DocumentLoader:
 
             print(f"    Page {page_num:2d} | Method: {method:11s} | Chars: {len(extracted_text):4d} | Preview: \"{preview_str}\"")
 
-            # Section detection heuristic
-            section_match = re.search(r"(?:^|\n)(\d+(\.\d+)*\s+[A-Z][A-Za-z0-9\s]{2,40})(?:\n|$)", extracted_text)
+            # Section detection heuristic supporting Unicode headings
+            section_match = re.search(r"(?:^|\n)(\d+(?:\.\d+)*\s+[^\W\d_][^\n:]{2,50})(?::|\n|$)", extracted_text, re.UNICODE)
             if section_match:
                 current_section = section_match.group(1).strip()
 
@@ -172,7 +175,7 @@ class DocumentLoader:
                     source=doc_name,
                     source_type=source_type,
                     section=current_section,
-                    language="en",
+                    language=detect_language(extracted_text) if extracted_text.strip() else "en",
                     metadata={
                         "total_pages": len(doc),
                         "char_count": len(extracted_text),
@@ -189,37 +192,75 @@ class DocumentLoader:
     @classmethod
     def load_docx(cls, file_path: Path) -> List[DocumentPage]:
         """
-        Extract text, headings, and tables from DOCX.
-        Tracks explicit headings as section metadata and segments into pages.
+        Extract text, headings, and tables from DOCX in exact document order.
+        Tracks explicit headings as section metadata and segments into synthetic pages.
         """
         doc = docx.Document(str(file_path))
         doc_name = file_path.name
 
-        # Structure blocks with section tags
         structural_blocks: List[Dict[str, str]] = []
         current_section = "General"
 
-        for para in doc.paragraphs:
-            text = para.text.strip()
-            if not text:
-                continue
+        try:
+            from docx.oxml.text.paragraph import CT_P
+            from docx.oxml.table import CT_Tbl
+            from docx.text.paragraph import Paragraph
+            from docx.table import Table
 
-            # Detect Word Heading styles
-            if para.style and para.style.name and para.style.name.lower().startswith("heading"):
-                current_section = text
-                structural_blocks.append({"type": "heading", "text": text, "section": current_section})
-            else:
-                structural_blocks.append({"type": "paragraph", "text": text, "section": current_section})
+            for child in doc.element.body:
+                if isinstance(child, CT_P):
+                    para = Paragraph(child, doc)
+                    text = para.text.strip()
+                    if not text:
+                        continue
+                    is_heading = False
+                    if para.style and para.style.name and para.style.name.lower().startswith("heading"):
+                        is_heading = True
+                    elif re.match(r"^(\d+(?:\.\d+)*\s+[^\W\d_].{1,50}|UNIT\s+[IVXLCDM]+.*|CHAPTER\s+\d+.*|SECTION\s+\d+.*)$", text, re.IGNORECASE | re.UNICODE) and len(text.split()) <= 12:
+                        is_heading = True
 
-        # Process tables
-        for table in doc.tables:
-            table_lines = []
-            for row in table.rows:
-                cells = [cell.text.strip() for cell in row.cells]
-                table_lines.append(" | ".join(cells))
-            if table_lines:
-                table_text = "\n".join(table_lines)
-                structural_blocks.append({"type": "table", "text": table_text, "section": current_section})
+                    if is_heading:
+                        current_section = text
+                        structural_blocks.append({"type": "heading", "text": text, "section": current_section})
+                    else:
+                        structural_blocks.append({"type": "paragraph", "text": text, "section": current_section})
+                elif isinstance(child, CT_Tbl):
+                    tbl = Table(child, doc)
+                    table_lines = []
+                    for row in tbl.rows:
+                        cells = [cell.text.strip() for cell in row.cells]
+                        table_lines.append(" | ".join(cells))
+                    if table_lines:
+                        table_text = "\n".join(table_lines)
+                        structural_blocks.append({"type": "table", "text": table_text, "section": current_section})
+        except Exception:
+            # Fallback to separate iteration if body traversal fails
+            structural_blocks = []
+            current_section = "General"
+            for para in doc.paragraphs:
+                text = para.text.strip()
+                if not text:
+                    continue
+                is_heading = False
+                if para.style and para.style.name and para.style.name.lower().startswith("heading"):
+                    is_heading = True
+                elif re.match(r"^(\d+(?:\.\d+)*\s+[^\W\d_].{1,50}|UNIT\s+[IVXLCDM]+.*|CHAPTER\s+\d+.*|SECTION\s+\d+.*)$", text, re.IGNORECASE | re.UNICODE) and len(text.split()) <= 12:
+                    is_heading = True
+
+                if is_heading:
+                    current_section = text
+                    structural_blocks.append({"type": "heading", "text": text, "section": current_section})
+                else:
+                    structural_blocks.append({"type": "paragraph", "text": text, "section": current_section})
+
+            for table in doc.tables:
+                table_lines = []
+                for row in table.rows:
+                    cells = [cell.text.strip() for cell in row.cells]
+                    table_lines.append(" | ".join(cells))
+                if table_lines:
+                    table_text = "\n".join(table_lines)
+                    structural_blocks.append({"type": "table", "text": table_text, "section": current_section})
 
         if not structural_blocks:
             return [
@@ -236,10 +277,9 @@ class DocumentLoader:
 
         # Group blocks into synthetic pages (~350 words per page to simulate realistic page attribution)
         pages: List[DocumentPage] = []
-        current_page_blocks = []
+        current_page_blocks: List[Dict[str, str]] = []
         current_words = 0
         page_num = 1
-        page_section = current_section
 
         for block in structural_blocks:
             words = len(block["text"].split())
@@ -251,7 +291,7 @@ class DocumentLoader:
                         page_number=page_num,
                         source=doc_name,
                         source_type="docx",
-                        section=page_section,
+                        section=current_page_blocks[0]["section"],
                         language=detect_language(content),
                         metadata={"char_count": len(content), "needs_ocr": False, "ocr_applied": False}
                     )
@@ -259,11 +299,9 @@ class DocumentLoader:
                 page_num += 1
                 current_page_blocks = [block]
                 current_words = words
-                page_section = block["section"]
             else:
                 current_page_blocks.append(block)
                 current_words += words
-                page_section = block["section"]
 
         if current_page_blocks:
             content = "\n\n".join(b["text"] for b in current_page_blocks)
@@ -273,7 +311,7 @@ class DocumentLoader:
                     page_number=page_num,
                     source=doc_name,
                     source_type="docx",
-                    section=page_section,
+                    section=current_page_blocks[0]["section"],
                     language=detect_language(content),
                     metadata={"char_count": len(content), "needs_ocr": False, "ocr_applied": False}
                 )

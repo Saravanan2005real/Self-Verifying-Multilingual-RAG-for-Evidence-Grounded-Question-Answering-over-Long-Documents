@@ -1,0 +1,169 @@
+{
+  "document_name": "DIP_Assignment.docx",
+  "document_type": "docx",
+  "file_size_bytes": 12456451,
+  "processed_at": "2026-09-21T21:03:05.176542",
+  "total_pages": 10,
+  "native_text_pages": 10,
+  "ocr_pages": 0,
+  "total_chunks": 8,
+  "total_characters": 22167,
+  "average_chunk_words": 411.1,
+  "average_chunk_chars": 2837.0,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunks": [
+    {
+      "chunk_id": "DIP_Assignment.docx_c0",
+      "document_name": "DIP_Assignment.docx",
+      "page_number": 1,
+      "section": "General",
+      "chunk_index": 0,
+      "text": "21CSE251T-DIGITAL IMAGE PROCESSING\n\nAssignment Report\n\nMulti-Year Satellite Image Analysis for Tirupati using\n\nGoogle Earth Engine (GEE)\n\nSubmitted by: [N LAASYA REDDY]\n\nRoll No: [RA2411003011154]\n\nDepartment: [Computing Technologies]\n\nDate: 13 April 2026\n\nIntroduction and Objectives\n\nThis study focuses on analyzing temporal changes in surface water bodies in Tirupati using satellite-based remote sensing techniques. Rapid urbanization and climate variability have significantly impacted water resources in Tirupati over the past decade. Monitoring these changes is essential for sustainable urban planning and water resource management.\n\nIn this work, Google Earth Engine is used to access and process Sentinel-2 imagery for the years 2021 to 2025. The Normalized Difference Water Index (NDWI) is computed to detect and analyze water bodies across different years.\n\nThe objective of this study is to evaluate changes in water extent over time and identify patterns related to seasonal variation, rainfall, and urban expansion.\n\n1.1 Objectives\n\n• To learn satellite image processing and cloud-based remote sensing using Google Earth Engine.\n• To download Sentinel-2 Surface Reflectance imagery (2021–2025) forTIRUPATI.\n• To compute the Normalized Difference Water Index (NDWI) for identifying and mapping water bodies.\n• To analyze temporal changes in water body extent between 2021 and 2025.\n• To interpret the impact of urbanization and climatic variations on water resources in Chennai.\n• To document the entire workflow and findings in a structured scientific report.\n\n1.2 About Sentinel-2\n\nSentinel-2 is a high-resolution, multispectral satellite mission developed by the European Space Agency under the Copernicus Programme. It consists of two satellites, Sentinel-2A and Sentinel-2B, providing a global revisit time of approximately 5 days.\n\nThe satellites carry a Multispectral Instrument (MSI) that captures data in 13 spectral bands, ranging from visible (VIS) and near-infrared (NIR) to shortwave infrared (SWIR), with spatial resolutions of 10 m, 20 m, and 60 m.\n\nIn this study, the dataset COPERNICUS/S2_SR_HARMONIZED is used. This is a Level-2A surface reflectance product that has undergone atmospheric correction, making it suitable for accurate land and water analysis.\n\nBand | Name | Resolution | Application\nB2 | Blue | 10m | Water body detection, atmospheric correction\nB3 | Green | 10m | Vegetation assessment, water quality\nB4 | Red | 10m | Vegetation analysis, soil exposure\nB5 | Red Edge 1 | 20m | Vegetation stress, chlorophyll content\nB6 | Red Edge 2 | 20m | Canopy chlorophyll content\nB7 | Red Edge 3 | 20m | Canopy chlorophyll content\nB8 | NIR | 10m | NDWI, vegetation, water body detection\nB8A | Narrow NIR | 20m | Vegetation indices\nB11 | SWIR 1 | 20m | Soil moisture, snow/ice differentiation\nB12 | SWIR 2 | 20m | Fire detection, burned area mapping\n\nTable 1: Sentinel-2 Spectral Bands and their Applications",
+      "word_count": 449,
+      "char_count": 2942,
+      "char_start": 0,
+      "char_end": 2942,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1
+      }
+    },
+    {
+      "chunk_id": "DIP_Assignment.docx_c1",
+      "document_name": "DIP_Assignment.docx",
+      "page_number": 2,
+      "section": "1.2 About Sentinel-2",
+      "chunk_index": 1,
+      "text": "Table 1: Sentinel-2 Spectral Bands and their Applications\n\n2. Part 1 — Data Download Using Google Earth Engine\n\nThis part walks through the complete process of accessing the GEE Code Editor, setting up a study area geometry, filtering and compositing Sentinel-2 imagery, and exporting GeoTIFF files to Google Drive.\n\nStep 1: Sign Up / Log In to Google Earth Engine\n\nBefore using GEE, you must register for a free account. GEE is available to researchers, educators, and students at no cost.\n\nOpen a browser and navigate to: https://code.earthengine.google.com\n\nIf you do not have an account, go to https://earthengine.google.com and click 'Get Started'. Sign up using a Google account.\n\nOnce approved (approval may take a few hours to days), navigate back to the Code Editor.\n\nScreenshot 1: Google Earth Engine Code Editor landing page showing the JavaScript editor panel (left), Map panel (bottom), and Console/Tasks tabs (right). Highlight the Script panel on the top-left.\n\nStep 2: Understanding the GEE Code Editor Interface\n\nThe GEE Code Editor is a web-based Integrated Development Environment (IDE) for writing and running JavaScript-based GEE scripts. It consists of the following key panels:\n\nScript Editor (top-left): Where you write JavaScript code to process geospatial data.\n\nScripts / Assets / Docs panel (left sidebar): Manage saved scripts, upload data assets, and access API documentation.\n\nConsole (top-right): Displays print() outputs, error messages, and object inspection results.\n\nTasks (top-right tab): Shows pending and completed export jobs.\n\nMap View (bottom): Interactive map for visualizing image layers.\n\nGeometry Tools (top of map): Tools to draw points, lines, polygons, and rectangles.\n\nScreenshot 2: Annotated GEE Code Editor interface showing all the panels labeled — Script Editor, Script Manager, Console, Tasks tab, Map View, and Geometry Tools toolbar.\n\nStep 3: Drawing the Study Area Geometry\n\nThe study area is defined by drawing a polygon over your hometown or region of interest using the Geometry Tools in the Map View.\n\nIn the GEE Code Editor, use the search bar at the top to search for your city/town and navigate to that area.\n\nIn the Map panel, click on the Geometry Tools icon (polygon/rectangle icon in the top-left of the map).\n\nSelect 'Draw a Shape' and carefully outline your area of interest (your hometown district or village).\n\nOnce the shape is drawn, a new variable called 'geometry' will automatically appear at the top of the Script Editor as an imported variable.\n\nYou can rename it or leave it as 'geometry'. This geometry will be used throughout the script to filter and clip the satellite images.\n\n💡 Note: Always draw the geometry before running the script, as the code references it as a pre-imported variable named 'geometry'.",
+      "word_count": 440,
+      "char_count": 2792,
+      "char_start": 2944,
+      "char_end": 5736,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 2
+      }
+    },
+    {
+      "chunk_id": "DIP_Assignment.docx_c2",
+      "document_name": "DIP_Assignment.docx",
+      "page_number": 3,
+      "section": "Step 2: Understanding the GEE Code Editor Interface",
+      "chunk_index": 2,
+      "text": "💡 Note: Always draw the geometry before running the script, as the code references it as a pre-imported variable named 'geometry'.\n\nScreenshot 3: GEE map view showing the drawn polygon geometry over your hometown. The 'geometry' variable should be visible in the Imports section at the top of the code editor.\n\nStep 4: Writing and Running the GEE Code\n\nCopy and paste the following complete JavaScript code into the GEE Code Editor. This script loads Sentinel-2 SR Harmonized imagery, filters by date and cloud cover, applies a scaling factor, displays the image on the map, and sets up the export task.\n\nGEE JavaScript Code — Sentinel-2 Data Download\n\nee.ImageCollection(\"COPERNICUS/S2_SR_HARMONIZED\") — Loads the Sentinel-2 Level-2A harmonized surface reflectance image collection from the GEE data catalog.\n\n.filterBounds(geometry) — Filters the image collection to only include images that intersect with the defined geometry (your study area).\n\n.filterDate('2021-01-01', '2021-12-31') — Filters images to the year 2021. Repeat this step for each year (2022, 2023, 2024, 2025) to download 5 separate TIFF files.\n\n.filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) — Keeps only images where cloud cover is less than 10% to ensure clean imagery.\n\n.sort('CLOUDY_PIXEL_PERCENTAGE') — Sorts the filtered collection in ascending order of cloud cover percentage.\n\n.mosaic() — Combines all filtered images into a single composite image using the least-cloudy pixels on top.\n\nimage.select(['B2','B3','B4','B8']) — Selects only the four required spectral bands: Blue, Green, Red, and NIR.\n\n.divide(10000).clip(geometry) — Converts raw digital numbers to surface reflectance values (0 to 1 range) and clips to the study area.\n\nMap.addLayer() — Displays the RGB composite image (B4=Red, B3=Green, B2=Blue) on the interactive map.\n\nExport.image.toDrive() — Creates an export task to save the processed image as a GeoTIFF file to Google Drive at 10m resolution.\n\nScreenshot 4: GEE Code Editor showing the script pasted and running. The Console tab should show no errors, and the Map panel should display the Sentinel-2 RGB composite of your study area.\n\nStep 5: Exporting Images to Google Drive\n\nAfter running the script, you need to manually trigger the export task from the Tasks tab and download the output files.\n\nAfter clicking Run, switch to the Tasks tab (top-right panel).\n\nYou will see a pending task named 'Sentinel2_Scaled_Export'. Click the blue Run button next to it.\n\nA confirmation dialog will appear. Verify the file name, resolution (10m), and Drive folder name. Click Run to confirm.\n\nRepeat the process by changing the filterDate year to 2022, 2023, 2024, and 2025 to generate 5 separate GeoTIFF files (one per year).\n\nOnce the tasks are complete (green checkmarks appear), open Google Drive and navigate to the specified folder.\n\nDownload all 5 GeoTIFF (.tif) files to your local machine.",
+      "word_count": 439,
+      "char_count": 2900,
+      "char_start": 5738,
+      "char_end": 8638,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 3
+      }
+    },
+    {
+      "chunk_id": "DIP_Assignment.docx_c3",
+      "document_name": "DIP_Assignment.docx",
+      "page_number": 4,
+      "section": "Step 4: Writing and Running the GEE Code",
+      "chunk_index": 3,
+      "text": "Download all 5 GeoTIFF (.tif) files to your local machine.\n\nScreenshot 5: GEE Tasks tab showing the export task 'Sentinel2_Scaled_Export' with a blue Run button and the confirmation dialog showing export settings (scale: 10m, format: GeoTIFF).\n\nScreenshot 6: Google Drive folder showing the 5 downloaded GeoTIFF files named for each year (2021–2025), e.g., Sentinel2_Scaled_Export_2021.tif through Sentinel2_Scaled_Export_2025.tif.\n\n💡 Note: To export images for multiple years, change only the year in the .filterDate() line and update the description field (e.g., 'Sentinel2_2022') for each export. All other parameters remain the same.\n\n3. Part 2 — Image Processing in Google Colab\n\nIn this section, the downloaded GeoTIFF files are loaded and processed in Google Colab using Python. Two spectral indices are calculated: NDWI for water body detection and NDVI for vegetation/urban analysis.\n\nStep 1: Setting Up Google Colab Environment\n\nOpen https://colab.research.google.com and create a new notebook.\n\nMount Google Drive to access the downloaded GeoTIFF files:\n\nfrom google.colab import drive\n\ndrive.mount('/content/drive')\n\nInstall the required library if not already available:\n\n!pip install rasterio\n\n!pip install matplotlib numpy\n\nScreenshot 7: Google Colab notebook showing the drive mount cell executed successfully, with the 'Mounted at /content/drive' confirmation message.\n\nStep 2: Loading GeoTIFF Files with Rasterio\n\nRasterio is a Python library for reading and writing geospatial raster data. It supports GeoTIFF and other common formats.\n\nimport rasterio\n\nimport numpy as np\n\nimport matplotlib.pyplot as plt\n\n# Define file path (update with your actual Drive path)\n\nfile_path = '/content/drive/MyDrive/GEE/Sentinel2_Scaled_Export_2021.tif'\n\n# Open the GeoTIFF\n\nwith rasterio.open(file_path) as src:\n\nprint('CRS:', src.crs)\n\nprint('Dimensions:', src.width, 'x', src.height)\n\nprint('Number of bands:', src.count)\n\nB2 = src.read(1).astype(float) # Blue\n\nB3 = src.read(2).astype(float) # Green\n\nB4 = src.read(3).astype(float) # Red\n\nB8 = src.read(4).astype(float) # NIR\n\nScreenshot 8: Colab output showing the CRS (coordinate reference system), dimensions, and band count of the loaded GeoTIFF file.\n\nStep 3: Water Body Analysis — NDWI\n\nThe Normalized Difference Water Index (NDWI) is used to delineate and monitor surface water features. It uses the Green and Near-Infrared (NIR) bands.\n\nNDWI = (Green − NIR) / (Green + NIR)\n\nUsing Bands: B3 (Green) and B8 (NIR)\n\nNDWI values range from −1 to +1. Positive values (> 0) generally indicate the presence of water bodies. Values between 0 and −0.1 may indicate moist soils, while values below −0.3 indicate dry land, vegetation, or urban areas.\n\n# Calculate NDWI\n\nndwi = (B3 - B8) / (B3 + B8 + 1e-10) # 1e-10 avoids division by zero\n\n# Plot NDWI\n\nplt.figure(figsize=(10, 8))\n\nplt.imshow(ndwi, cmap='RdYlBu', vmin=-1, vmax=1)\n\nplt.colorbar(label='NDWI Value')\n\nplt.title('NDWI — Water Body Map (2021)')\n\nplt.axis('off')\n\nplt.tight_layout()\n\nplt.savefig('NDWI_2021.png', dpi=150)\n\nplt.show()\n\nScreenshot 9: Colab output showing the NDWI map for 2021. Water bodies should appear in blue/dark blue (positive values), and dry land/urban areas in red/yellow (negative values).",
+      "word_count": 449,
+      "char_count": 3230,
+      "char_start": 8640,
+      "char_end": 11870,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 4
+      }
+    },
+    {
+      "chunk_id": "DIP_Assignment.docx_c4",
+      "document_name": "DIP_Assignment.docx",
+      "page_number": 6,
+      "section": "Step 3: Water Body Analysis — NDWI",
+      "chunk_index": 4,
+      "text": "Screenshot 9: Colab output showing the NDWI map for 2021. Water bodies should appear in blue/dark blue (positive values), and dry land/urban areas in red/yellow (negative values).\n\nStep 4: Urban/Vegetation Analysis — NDVI\n\nThe Normalized Difference Vegetation Index (NDVI) measures the health and density of vegetation. It is widely used to detect urban growth by observing the reduction in vegetation cover over time.\n\nNDVI = (NIR − Red) / (NIR + Red)\n\nUsing Bands: B8 (NIR) and B4 (Red)\n\nNDVI values range from −1 to +1. Dense vegetation yields values above 0.5, sparse vegetation between 0.1 and 0.5, and bare soil/urban areas typically show values below 0.1. A decrease in NDVI over time indicates urban expansion.\n\n# Calculate NDVI\n\nndvi = (B8 - B4) / (B8 + B4 + 1e-10)\n\n# Plot NDVI\n\nplt.figure(figsize=(10, 8))\n\nplt.imshow(ndvi, cmap='RdYlGn', vmin=-1, vmax=1)\n\nplt.colorbar(label='NDVI Value')\n\nplt.title('NDVI — Vegetation/Urban Map (2021)')\n\nplt.axis('off')\n\nplt.tight_layout()\n\nplt.savefig('NDVI_2021.png', dpi=150)\n\nplt.show()\n\nScreenshot 10: Colab output showing the NDVI map for 2021. Dense vegetation areas appear in dark green, while urban or bare areas appear in red or yellow.\n\n4. Part 3 — Multi-Year Change Analysis (2021 vs 2025)\n\nAfter processing images for all five years (2021–2025), compare the NDWI or NDVI results to quantify changes. The following code demonstrates the comparison between 2021 and 2025.\n\nStep 1: Load Both Years and Compute Index\n\ndef compute_ndwi(filepath):\n\nwith rasterio.open(filepath) as src:\n\nB3 = src.read(2).astype(float) # Green\n\nB8 = src.read(4).astype(float) # NIR\n\nreturn (B3 - B8) / (B3 + B8 + 1e-10)\n\nndwi_2021 = compute_ndwi('/content/drive/MyDrive/GEE/Sentinel2_2021.tif')\n\nndwi_2025 = compute_ndwi('/content/drive/MyDrive/GEE/Sentinel2_2025.tif')\n\n# Compute change\n\nndwi_change = ndwi_2025 - ndwi_2021\n\nStep 2: Side-by-Side Comparison Plot\n\nfig, axes = plt.subplots(1, 3, figsize=(18, 6))\n\naxes[0].imshow(ndwi_2021, cmap='RdYlBu', vmin=-1, vmax=1)\n\naxes[0].set_title('NDWI 2021')\n\naxes[0].axis('off')\n\naxes[1].imshow(ndwi_2025, cmap='RdYlBu', vmin=-1, vmax=1)\n\naxes[1].set_title('NDWI 2025')\n\naxes[1].axis('off')\n\naxes[2].imshow(ndwi_change, cmap='coolwarm', vmin=-0.5, vmax=0.5)\n\naxes[2].set_title('NDWI Change (2021 to 2025)')\n\naxes[2].axis('off')\n\nplt.suptitle('Water Body Change Analysis — 2021 vs 2025', fontsize=14, fontweight='bold')\n\nplt.tight_layout()\n\nplt.savefig('NDWI_Change_2021_2025.png', dpi=150)\n\nplt.show()\n\nShow your results in the report\n\nScreenshot 11: Side-by-side comparison figure showing three panels — NDWI 2021 (left), NDWI 2025 (middle), and the difference map (right). Blue areas in the change map indicate increased water, red indicates decreased water.\n\nStep 3: Quantitative Area Statistics\n\nUse threshold-based classification to estimate the total area of water bodies or vegetation in each year and calculate the percentage change.\n\n# Pixel area in sq km (10m resolution => 0.0001 km2 per pixel)\n\npixel_area_km2 = 0.0001\n\n# Threshold: NDWI > 0.2 = water\n\nwater_2021 = np.sum(ndwi_2021 > 0.2) * pixel_area_km2\n\nwater_2025 = np.sum(ndwi_2025 > 0.2) * pixel_area_km2\n\nchange_pct = ((water_2025 - water_2021) / water_2021) * 100\n\nprint(f'Water Area 2021: {water_2021:.2f} km2')\n\nprint(f'Water Area 2025: {water_2025:.2f} km2')\n\nprint(f'Change: {change_pct:.1f}%')",
+      "word_count": 436,
+      "char_count": 3350,
+      "char_start": 11872,
+      "char_end": 15222,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 6
+      }
+    },
+    {
+      "chunk_id": "DIP_Assignment.docx_c5",
+      "document_name": "DIP_Assignment.docx",
+      "page_number": 7,
+      "section": "Step 2: Side-by-Side Comparison Plot",
+      "chunk_index": 5,
+      "text": "print(f'Change: {change_pct:.1f}%')\n\nScreenshot 12: Colab output showing the quantitative area statistics — water area (km²) for 2021 and 2025 and the percentage change value.\n\n5. Part 4 — Report Structure\n\nThe final report documents all the steps, results, and observations from the analysis. Each section should be written clearly with supporting maps and charts.\n\n5.1 Introduction\n\nGoogle Earth Engine (GEE) is a cloud-based geospatial analysis platform that enables processing and analysis of large-scale satellite imagery efficiently. It provides access to a vast archive of remote sensing data, including Sentinel-2, making it highly suitable for environmental monitoring and multi-temporal analysis.\n\nSentinel-2, developed by the European Space Agency (ESA), is a multispectral satellite mission that provides high-resolution imagery with a revisit time of 5 days. It captures data across multiple spectral bands, allowing the analysis of land cover, vegetation, and water bodies using indices such as NDWI and NDVI.\n\nRemote sensing plays a crucial role in environmental monitoring as it helps in observing changes over time, detecting patterns, and supporting decision-making. In this study, the focus is on analyzing water bodies in Tirupati over the period 2021–2025. Monitoring water bodies is important for understanding rainfall impact, water resource management, and environmental sustainability.\n\n5.2 Study Area\n\nThe study area selected for this project is Tirupati, located in Andhra Pradesh, India. Tirupati lies in the southeastern part of the country and is surrounded by hilly terrain, agricultural land, and urban settlements.\n\nThe region experiences a tropical climate with seasonal rainfall, which directly influences water availability. The land use pattern includes urban areas, vegetation (forests and agriculture), and scattered water bodies such as lakes and reservoirs.\n\nThis study focuses on analyzing spatial and temporal changes in water bodies within Tirupati using satellite imagery. A map showing the study area with the selected geometry is included below.\n\nScreenshot 13: Map showing the location of your study area within the state/country, with the GEE geometry polygon overlaid on a basemap.\n\n5.3 Methodology\n\nThe methodology for this study involves processing satellite imagery using Google Earth Engine.\n\nFirst, Sentinel-2 Surface Reflectance data (COPERNICUS/S2_SR_HARMONIZED) was accessed through GEE. The study area geometry for Tirupati was defined, and images were filtered based on date (2021–2025) and cloud cover (less than 10%).\n\nThe images were then composited using the .mosaic() function to create a single image for each year. Relevant spectral bands (B2, B3, B4, and B8) were selected and scaled appropriately.\n\nNext, spectral indices were calculated:\n\nNDWI for water body detection\n\nNDVI for vegetation analysis\n\nBased on these indices, land cover classification was performed into three categories:\n\nWater\n\nVegetation\n\nLand\n\nThe results were visualized using color mapping and exported as GeoTIFF files to Google Drive for further analysis.",
+      "word_count": 447,
+      "char_count": 3098,
+      "char_start": 15224,
+      "char_end": 18322,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 7
+      }
+    },
+    {
+      "chunk_id": "DIP_Assignment.docx_c6",
+      "document_name": "DIP_Assignment.docx",
+      "page_number": 8,
+      "section": "5.2 Study Area",
+      "chunk_index": 6,
+      "text": "The results were visualized using color mapping and exported as GeoTIFF files to Google Drive for further analysis.\n\nkind of image processing steps you adapting for this work.\n\nSentinel-2 images were collected and filtered for low cloud cover.\nThe study area was defined and images were processed in GEE.\nNDWI and NDVI were calculated to identify water and vegetation.\nThe area was classified into land, vegetation, and water and then exported.\n\n5.4 Results\n\nPresent the processed NDWI and/or NDVI maps for each year. Include the change map between 2021 and 2025. Provide the quantitative area statistics table summarizing water body or vegetation area for each year.\n\nYear | Water Area (km²) | NDWI Mean | Change vs 2021 (%)\n2021 | 12.50 | 30.20 | Baseline\n2022 | 13.10 | 29.80 | 4.80%\n2023 | 14.00 | 28.90 | 12.00%\n2024 | 13.60 | 29.50 | 8.80%\n2025 | 14.80 | 28.20 | 18.40%\n\nTable 2: Annual Water Body Area Statistics (2021–2025) — Fill in after analysis\n\n5.5 Output Screenshot:\n\n5.6 Analysis and Discussion\n\nInterpret the observed changes. Possible discussion points include:\n\nThe land cover classification maps for the years 2021 and 2025 reveal noticeable changes in water bodies, vegetation, and urban areas in Tirupati.\n\nA comparison of the two years indicates that water bodies (blue regions) have slightly increased in 2025 compared to 2021. This increase may be attributed to improved rainfall patterns, seasonal water accumulation, or better water management practices such as reservoir storage. Some smaller scattered water patches also appear more prominent in 2025.\n\nThe urban areas (brown/red regions) show a moderate increase, especially around the central and southern parts of the study area. This suggests urban expansion and infrastructure development, likely due to population growth and increased economic activity in Tirupati. The expansion appears to spread outward from the city center.\n\nThe vegetation cover (green regions) remains dominant across both years, but slight variations can be observed. In some areas, vegetation appears to have reduced where urban expansion has occurred, while in other areas it remains stable or slightly increased.\n\nNo major anomalies are observed, but minor variations may be due to seasonal differences, cloud cover effects, or image acquisition timing. These factors can influence spectral indices like NDWI and NDVI.\n\nOverall, the analysis indicates a balanced interaction between urban growth, vegetation stability, and slight improvement in water presence over the period from 2021 to 2025.\n\nTop of Form\n\nBottom of Form\n\n5.6 Conclusion",
+      "word_count": 408,
+      "char_count": 2599,
+      "char_start": 18324,
+      "char_end": 20923,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 8
+      }
+    },
+    {
+      "chunk_id": "DIP_Assignment.docx_c7",
+      "document_name": "DIP_Assignment.docx",
+      "page_number": 10,
+      "section": "5.6 Conclusion",
+      "chunk_index": 7,
+      "text": "5.6 Conclusion\n\nThe analysis of Tirupati using Sentinel-2 imagery from 2021 to 2025 shows that water bodies have slightly increased over the five-year period, likely due to improved rainfall and water retention. At the same time, urban areas have expanded moderately, especially around the central region, indicating ongoing development. Vegetation cover remains largely stable, with minor variations influenced by seasonal and land-use changes.\n\nThe use of Google Earth Engine (GEE) proved to be highly effective for this study, as it enabled fast processing, easy access to multi-year satellite data, and efficient visualization of spatial changes. Sentinel-2 imagery provided sufficient resolution and spectral information for accurate calculation of NDWI and NDVI, making it suitable for temporal environmental analysis.\n\nFor future work, the study can be extended by using higher-resolution satellite data for more detailed mapping, performing monthly or seasonal analysis to capture finer changes, and applying machine learning-based classification techniques to improve accuracy and automate land cover detection.\n\n7. References\n\nGoogle Earth Engine: https://earthengine.google.com\n\nGEE Code Editor Documentation: https://developers.google.com/earth-engine/guides/playground\n\nSentinel-2 MSI Data Catalog: https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED\n\nRasterio Python Library: https://rasterio.readthedocs.io\n\nMcFeeters, S.K. (1996). The use of the Normalized Difference Water Index (NDWI) in the delineation of open water features. International Journal of Remote Sensing, 17(7), 1425–1432.\n\nTucker, C.J. (1979). Red and photographic infrared linear combinations for monitoring vegetation. Remote Sensing of Environment, 8(2), 127–150.",
+      "word_count": 221,
+      "char_count": 1785,
+      "char_start": 20925,
+      "char_end": 22710,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 10
+      }
+    }
+  ]
+}
