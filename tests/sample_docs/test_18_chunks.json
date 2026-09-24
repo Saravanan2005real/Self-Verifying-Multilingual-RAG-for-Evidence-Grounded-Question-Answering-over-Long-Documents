@@ -1,0 +1,45 @@
+{
+  "document_name": "test_18_sem.pdf",
+  "document_type": "pdf",
+  "file_size_bytes": 945,
+  "processed_at": "2026-09-22T21:12:50.481045",
+  "total_pages": 1,
+  "native_text_pages": 1,
+  "ocr_pages": 0,
+  "total_chunks": 1,
+  "total_characters": 117,
+  "average_chunk_words": 14.0,
+  "average_chunk_chars": 117.0,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunking_strategy": "deterministic_fallback",
+  "chunks": [
+    {
+      "chunk_id": "test_18_sem.pdf_c0",
+      "document_name": "test_18_sem.pdf",
+      "page_number": 1,
+      "section": "General",
+      "chunk_index": 0,
+      "text": "Chapter 2: Algorithms and Automata\nDeterministic finite automata represent computational machines with finite states.",
+      "word_count": 14,
+      "char_count": 117,
+      "char_start": 0,
+      "char_end": 117,
+      "language": "en",
+      "source_type": "pdf",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1,
+        "chunking_strategy": "deterministic_fallback"
+      }
+    }
+  ]
+}

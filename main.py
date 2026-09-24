@@ -16,7 +16,13 @@ if hasattr(sys.stderr, "reconfigure"):
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
-from src.config import PROCESSED_DIR, CHUNK_SIZE, CHUNK_OVERLAP
+from src.config import (
+    PROCESSED_DIR,
+    CHUNK_SIZE,
+    CHUNK_OVERLAP,
+    SEMANTIC_CHUNKING_ENABLED,
+    SEMANTIC_MODEL,
+)
 from src.document_loader import DocumentLoader, DocumentPage
 from src.chunking import IntelligentChunker, DocumentChunk
 from src.ocr import is_tesseract_available
@@ -28,6 +34,7 @@ def process_document(
     chunk_size: int = CHUNK_SIZE,
     chunk_overlap: int = CHUNK_OVERLAP,
     enable_ocr: bool = True,
+    enable_semantic: Optional[bool] = None,
 ) -> Path:
     """
     Stage 1 Ingestion Pipeline:
@@ -66,7 +73,8 @@ def process_document(
     print("\n[Step 2/3] Analyzing document languages & performing semantic chunking...")
     doc_lang_analysis = analyze_document_languages([p.content for p in pages])
 
-    chunker = IntelligentChunker()
+    sem_enabled = enable_semantic if enable_semantic is not None else SEMANTIC_CHUNKING_ENABLED
+    chunker = IntelligentChunker(enabled=sem_enabled)
     chunks: List[DocumentChunk] = chunker.chunk_pages(pages, doc_analysis=doc_lang_analysis)
 
     detected_languages = doc_lang_analysis["detected_languages"]
@@ -77,6 +85,7 @@ def process_document(
 
     ocr_pages_count = sum(1 for p in pages if p.metadata.get("extraction_method") == "OCR" or p.metadata.get("ocr_applied", False))
     native_pages_count = total_pages - ocr_pages_count
+    chunking_strategy = chunks[0].metadata.get("chunking_strategy", "deterministic") if chunks else "none"
 
     print(f"\n--- STAGE 1 INGESTION SUMMARY ---")
     print(f"Total pages: {total_pages}")
@@ -86,6 +95,7 @@ def process_document(
     print(f"Total chunks: {len(chunks)}")
     print(f"Average chunk size: {avg_words:.0f} words ({avg_chars:.0f} characters)")
     print(f"Detected language: {lang_display}")
+    print(f"Chunking strategy: {chunking_strategy}")
     print(f"---------------------------------")
 
     # 3. Serialize and Save to JSON
@@ -115,6 +125,7 @@ def process_document(
         "language_summary": lang_display,
         "is_multilingual": doc_lang_analysis["is_multilingual"],
         "ocr_used": ocr_pages_count > 0,
+        "chunking_strategy": chunking_strategy,
         "chunks": [chunk.to_dict() for chunk in chunks]
     }
 
@@ -148,6 +159,8 @@ def main():
     parser.add_argument("--chunk-size", type=int, default=CHUNK_SIZE, help=f"Chunk size (default: {CHUNK_SIZE})")
     parser.add_argument("--chunk-overlap", type=int, default=CHUNK_OVERLAP, help=f"Chunk overlap (default: {CHUNK_OVERLAP})")
     parser.add_argument("--native-only", "--no-ocr", action="store_true", help="Extract selectable native PDF text only and skip OCR entirely")
+    parser.add_argument("--semantic", dest="semantic", action="store_true", default=None, help="Force Llama 3.2 semantic chunking")
+    parser.add_argument("--no-semantic", dest="semantic", action="store_false", help="Disable Llama 3.2 semantic chunking")
 
     args = parser.parse_args()
 
@@ -158,6 +171,7 @@ def main():
             chunk_size=args.chunk_size,
             chunk_overlap=args.chunk_overlap,
             enable_ocr=not args.native_only,
+            enable_semantic=args.semantic,
         )
         print(f"DONE. Chunks saved to: {out_path}")
     except Exception as e:

@@ -2,7 +2,7 @@
   "document_name": "research_paper.pdf",
   "document_type": "pdf",
   "file_size_bytes": 2993,
-  "processed_at": "2026-09-21T20:59:32.243756",
+  "processed_at": "2026-09-22T21:13:49.180909",
   "total_pages": 3,
   "native_text_pages": 3,
   "ocr_pages": 0,
@@ -20,6 +20,7 @@
   "language_summary": "English (en)",
   "is_multilingual": false,
   "ocr_used": false,
+  "chunking_strategy": "llama3.2_semantic",
   "chunks": [
     {
       "chunk_id": "research_paper.pdf_c0",
@@ -36,7 +37,8 @@
       "source_type": "pdf",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 1
+        "page_start": 1,
+        "chunking_strategy": "llama3.2_semantic"
       }
     }
   ]
