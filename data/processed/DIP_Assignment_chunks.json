@@ -2,7 +2,7 @@
   "document_name": "DIP_Assignment.docx",
   "document_type": "docx",
   "file_size_bytes": 12456451,
-  "processed_at": "2026-09-21T21:03:05.176542",
+  "processed_at": "2026-09-22T21:37:01.115566",
   "total_pages": 10,
   "native_text_pages": 10,
   "ocr_pages": 0,
@@ -20,6 +20,7 @@
   "language_summary": "English (en)",
   "is_multilingual": false,
   "ocr_used": false,
+  "chunking_strategy": "deterministic_fallback",
   "chunks": [
     {
       "chunk_id": "DIP_Assignment.docx_c0",
@@ -36,7 +37,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 1
+        "page_start": 1,
+        "chunking_strategy": "deterministic_fallback"
       }
     },
     {
@@ -54,7 +56,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 2
+        "page_start": 2,
+        "chunking_strategy": "deterministic_fallback"
       }
     },
     {
@@ -72,7 +75,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 3
+        "page_start": 3,
+        "chunking_strategy": "deterministic_fallback"
       }
     },
     {
@@ -90,7 +94,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 4
+        "page_start": 4,
+        "chunking_strategy": "deterministic_fallback"
       }
     },
     {
@@ -108,7 +113,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 6
+        "page_start": 6,
+        "chunking_strategy": "deterministic_fallback"
       }
     },
     {
@@ -126,7 +132,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 7
+        "page_start": 7,
+        "chunking_strategy": "deterministic_fallback"
       }
     },
     {
@@ -144,7 +151,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 8
+        "page_start": 8,
+        "chunking_strategy": "deterministic_fallback"
       }
     },
     {
@@ -162,7 +170,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 10
+        "page_start": 10,
+        "chunking_strategy": "deterministic_fallback"
       }
     }
   ]

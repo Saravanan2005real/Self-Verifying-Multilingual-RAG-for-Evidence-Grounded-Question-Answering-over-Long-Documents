@@ -10,9 +10,18 @@ import sys
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
-from src.config import UPLOADS_DIR, PROCESSED_DIR, CHUNK_SIZE, CHUNK_OVERLAP
+from src.config import (
+    UPLOADS_DIR,
+    PROCESSED_DIR,
+    CHUNK_SIZE,
+    CHUNK_OVERLAP,
+    SEMANTIC_CHUNKING_ENABLED,
+    SEMANTIC_MODEL,
+    OLLAMA_BASE_URL,
+)
 from src.language_detection import get_language_name
 from src.ocr import is_tesseract_available, is_ocr_available, get_ocr_engine_name
+from src.semantic_chunker import OllamaSemanticAdvisor
 from main import process_document
 
 # Page Configuration
@@ -83,6 +92,11 @@ st.markdown("""
         color: #fde68a;
         border: 1px solid #f59e0b;
     }
+    .badge-strategy {
+        background: #3b0764;
+        color: #e9d5ff;
+        border: 1px solid #a855f7;
+    }
 
     /* Chunk Container */
     .chunk-box {
@@ -152,11 +166,31 @@ with st.sidebar:
     )
 
     st.markdown("---")
+    st.subheader("🤖 AI Semantic Chunking")
+    try:
+        advisor = OllamaSemanticAdvisor()
+        ollama_online = advisor.is_available()
+    except Exception:
+        ollama_online = False
+
+    if ollama_online:
+        st.success(f"● Ollama: `{SEMANTIC_MODEL}`")
+    else:
+        st.warning("○ Ollama Offline (Fallback active)")
+
+    semantic_toggle = st.checkbox(
+        "Enable Llama 3.2 Semantic Chunking",
+        value=SEMANTIC_CHUNKING_ENABLED,
+        help="Use Llama 3.2 via Ollama to determine contextual semantic boundaries (falls back cleanly if offline)."
+    )
+
+    st.markdown("---")
     st.markdown("""
     **Project Stage 1 Scope:**
     - PDF / DOCX / TXT Parsing
     - Scanned Page Detection / OCR
     - Language Identification
+    - Llama 3.2 Contextual Boundaries
     - Page & Section Preservation
     - JSON Export
     """)
@@ -194,6 +228,7 @@ if process_clicked and uploaded_file is not None:
                 chunk_size=chunk_size,
                 chunk_overlap=chunk_overlap,
                 enable_ocr=ocr_toggle,
+                enable_semantic=semantic_toggle,
             )
             elapsed = time.time() - start_time
 
@@ -248,10 +283,17 @@ if st.session_state.processed_data is not None:
         </div>
         """, unsafe_allow_html=True)
     with m5:
+        strat = data.get("chunking_strategy", "deterministic")
+        if strat == "llama3.2_semantic":
+            strat_label = "🤖 Llama 3.2"
+        elif "fallback" in strat:
+            strat_label = "⚙️ Fallback"
+        else:
+            strat_label = "⚙️ Deterministic"
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-title">Semantic Chunks</div>
-            <div class="metric-value">{data['total_chunks']}</div>
+            <div class="metric-title">Strategy ({data['total_chunks']} chunks)</div>
+            <div class="metric-value" style="font-size: 1.15rem;">{strat_label}</div>
         </div>
         """, unsafe_allow_html=True)
     with m6:
@@ -311,6 +353,14 @@ if st.session_state.processed_data is not None:
         chunk_id_clean = html.escape(str(c['chunk_id']))
         escaped_chunk_text = html.escape(c['text'])
         ocr_flag = '<span class="badge badge-ocr">OCR Applied</span>' if c.get("ocr_applied") else ''
+        
+        c_strat = c.get("metadata", {}).get("chunking_strategy", data.get("chunking_strategy", "deterministic"))
+        if c_strat == "llama3.2_semantic":
+            strat_badge = '<span class="badge badge-strategy">🤖 Llama 3.2 Semantic</span>'
+        elif "fallback" in c_strat:
+            strat_badge = '<span class="badge badge-strategy">⚙️ Deterministic Fallback</span>'
+        else:
+            strat_badge = '<span class="badge badge-strategy">⚙️ Deterministic</span>'
 
         st.markdown(f"""
         <div class="chunk-box">
@@ -319,7 +369,8 @@ if st.session_state.processed_data is not None:
                 <span class="badge badge-page">📄 Page {c['page_number']}</span>
                 <span class="badge badge-section">🏷️ Section: {section_label}</span>
                 <span class="badge badge-lang">🌐 {lang_label}</span>
-                <span class="badge badge-id">{c['char_count']} chars (offset {c['char_start']}-{c['char_end']})</span>
+                <span class="badge badge-id">{c['word_count']} words ({c['char_count']} chars)</span>
+                {strat_badge}
                 {ocr_flag}
             </div>
             <div class="chunk-text">{escaped_chunk_text}</div>

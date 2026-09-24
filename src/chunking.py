@@ -279,7 +279,7 @@ class MeaningfulSemanticChunker:
                     language=chunk_lang,
                     source_type=current_source_type,
                     ocr_applied=current_ocr_applied,
-                    metadata={"page_start": current_page_number}
+                    metadata={"page_start": current_page_number, "chunking_strategy": "deterministic"}
                 )
             )
             global_chunk_idx += 1
@@ -355,7 +355,8 @@ class MeaningfulSemanticChunker:
         # Flush remaining buffer (if very small, merge with previous chunk to avoid tiny fragments)
         if current_unit_texts:
             remaining_words = sum(len(t.split()) for t in current_unit_texts)
-            if remaining_words < 100 and chunks:
+            min_orphan_threshold = min(self.min_words // 2, 40)
+            if remaining_words < min_orphan_threshold and chunks:
                 # Merge into last chunk
                 prev = chunks[-1]
                 remaining_text = "\n\n".join(current_unit_texts)
@@ -370,5 +371,13 @@ class MeaningfulSemanticChunker:
 
         return chunks
 
-# Backward-compatibility alias
-IntelligentChunker = MeaningfulSemanticChunker
+def IntelligentChunker(*args, **kwargs):
+    """
+    Factory creating a LlamaSemanticChunker with automatic deterministic fallback.
+    """
+    from src.semantic_chunker import LlamaSemanticChunker
+    from src.config import SEMANTIC_CHUNKING_ENABLED
+    if "enabled" not in kwargs:
+        kwargs["enabled"] = SEMANTIC_CHUNKING_ENABLED
+    return LlamaSemanticChunker(*args, **kwargs)
+

@@ -2,7 +2,7 @@
   "document_name": "test_07_short.docx",
   "document_type": "docx",
   "file_size_bytes": 36695,
-  "processed_at": "2026-09-21T20:59:32.362437",
+  "processed_at": "2026-09-22T21:14:03.926562",
   "total_pages": 1,
   "native_text_pages": 1,
   "ocr_pages": 0,
@@ -20,6 +20,7 @@
   "language_summary": "English (en)",
   "is_multilingual": false,
   "ocr_used": false,
+  "chunking_strategy": "llama3.2_semantic",
   "chunks": [
     {
       "chunk_id": "test_07_short.docx_c0",
@@ -36,7 +37,8 @@
       "source_type": "docx",
       "ocr_applied": false,
       "metadata": {
-        "page_start": 1
+        "page_start": 1,
+        "chunking_strategy": "llama3.2_semantic"
       }
     }
   ]
