@@ -251,8 +251,9 @@ class MeaningfulSemanticChunker:
                 return
 
             full_chunk_text = "\n\n".join(current_unit_texts).strip()
-            # Clean any leaked UI HTML tags from chunk text
-            full_chunk_text = re.sub(r"</?(?:div|span|p)[^>]*>", "", full_chunk_text).strip()
+            # Clean any leaked HTML tags or UI markup from chunk text
+            full_chunk_text = re.sub(r"</?[a-zA-Z][^>]*>", "", full_chunk_text)
+            full_chunk_text = re.sub(r"class\s*=\s*['\"][^'\"]*['\"]", "", full_chunk_text).strip()
 
             total_words = len(full_chunk_text.split())
             total_chars = len(full_chunk_text)

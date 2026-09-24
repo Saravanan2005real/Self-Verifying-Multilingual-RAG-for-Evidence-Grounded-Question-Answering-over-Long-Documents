@@ -1,7 +1,7 @@
 import os
+import re
 import json
 import time
-import html
 from pathlib import Path
 import streamlit as st
 
@@ -13,6 +13,7 @@ sys.path.insert(0, str(BASE_DIR))
 from src.config import (
     UPLOADS_DIR,
     PROCESSED_DIR,
+    INDEX_DIR,
     CHUNK_SIZE,
     CHUNK_OVERLAP,
     SEMANTIC_CHUNKING_ENABLED,
@@ -22,115 +23,41 @@ from src.config import (
 from src.language_detection import get_language_name
 from src.ocr import is_tesseract_available, is_ocr_available, get_ocr_engine_name
 from src.semantic_chunker import OllamaSemanticAdvisor
+from src.vector_store import FAISSVectorStore
 from main import process_document
 
 # Page Configuration
 st.set_page_config(
-    page_title="Stage 1: Document Parsing & Semantic Chunking",
-    page_icon="📑",
+    page_title="Stage 1 & 2: Document Parsing & Multilingual Vector Retrieval",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# Custom CSS for Modern, Premium Internship Demo
-st.markdown("""
-<style>
-    /* Metric Cards */
-    .metric-card {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 16px 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-    .metric-title {
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: #94a3b8;
-        margin-bottom: 6px;
-    }
-    .metric-value {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #f8fafc;
-    }
-
-    /* Badges */
-    .badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 12px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        margin-right: 6px;
-    }
-    .badge-page {
-        background: #1e3a8a;
-        color: #93c5fd;
-        border: 1px solid #3b82f6;
-    }
-    .badge-section {
-        background: #312e81;
-        color: #c7d2fe;
-        border: 1px solid #6366f1;
-    }
-    .badge-lang {
-        background: #064e3b;
-        color: #6ee7b7;
-        border: 1px solid #10b981;
-    }
-    .badge-id {
-        background: #374151;
-        color: #e5e7eb;
-        border: 1px solid #4b5563;
-        font-family: monospace;
-    }
-    .badge-ocr {
-        background: #78350f;
-        color: #fde68a;
-        border: 1px solid #f59e0b;
-    }
-    .badge-strategy {
-        background: #3b0764;
-        color: #e9d5ff;
-        border: 1px solid #a855f7;
-    }
-
-    /* Chunk Container */
-    .chunk-box {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-left: 4px solid #3b82f6;
-        border-radius: 8px;
-        padding: 14px 18px;
-        margin-bottom: 14px;
-        transition: all 0.2s ease-in-out;
-    }
-    .chunk-box:hover {
-        border-color: rgba(59, 130, 246, 0.5);
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
-    }
-    .chunk-text {
-        font-size: 0.93rem;
-        line-height: 1.6;
-        color: #cbd5e1;
-        margin-top: 10px;
-        white-space: pre-wrap;
-    }
-</style>
-""", unsafe_allow_html=True)
 
 # Session State Initialization
 if "processed_data" not in st.session_state:
     st.session_state.processed_data = None
 if "output_file" not in st.session_state:
     st.session_state.output_file = None
+if "vector_store" not in st.session_state:
+    st.session_state.vector_store = None
+if "vector_store_doc" not in st.session_state:
+    st.session_state.vector_store_doc = None
+
+# Auto-load existing processed document if available and not yet loaded in session
+if st.session_state.processed_data is None:
+    existing_processed = sorted(PROCESSED_DIR.glob("*_chunks.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    if existing_processed:
+        try:
+            with open(existing_processed[0], "r", encoding="utf-8") as f:
+                st.session_state.processed_data = json.load(f)
+            st.session_state.output_file = str(existing_processed[0])
+        except Exception:
+            pass
+
 
 # Sidebar Controls
 with st.sidebar:
-    st.title("⚙️ Stage 1 Configuration")
+    st.title("Stage 1 Configuration")
     st.caption("Offline Document Ingestion & Chunking")
 
     # OCR Status & Toggle
@@ -142,7 +69,7 @@ with st.sidebar:
         help="If checked, runs local OCR when no selectable text is found. Uncheck to extract native PDF text only."
     )
     if ocr_available:
-        st.info(f"● OCR Engine: {ocr_engine}")
+        st.info(f"OCR Engine: {ocr_engine}")
     else:
         st.caption("Local OCR engine not active.")
 
@@ -166,7 +93,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.subheader("🤖 AI Semantic Chunking")
+    st.subheader("Semantic Chunking")
     try:
         advisor = OllamaSemanticAdvisor()
         ollama_online = advisor.is_available()
@@ -174,9 +101,9 @@ with st.sidebar:
         ollama_online = False
 
     if ollama_online:
-        st.success(f"● Ollama: `{SEMANTIC_MODEL}`")
+        st.info(f"Ollama: {SEMANTIC_MODEL}")
     else:
-        st.warning("○ Ollama Offline (Fallback active)")
+        st.warning("Ollama Offline (Fallback active)")
 
     semantic_toggle = st.checkbox(
         "Enable Llama 3.2 Semantic Chunking",
@@ -196,7 +123,7 @@ with st.sidebar:
     """)
 
 # Header
-st.title("📄 Multilingual Document Ingestion & Semantic Chunking")
+st.title("Multilingual Document Ingestion & Semantic Chunking")
 st.caption("Stage 1 Demonstration • Offline Document Parser & Intelligent Chunk Generator")
 
 # File Upload Section
@@ -209,7 +136,7 @@ uploaded_file = st.file_uploader(
 
 col_btn, col_info = st.columns([1, 3])
 with col_btn:
-    process_clicked = st.button("🚀 Process Document", type="primary", use_container_width=True, disabled=(uploaded_file is None))
+    process_clicked = st.button("Process Document", type="primary", use_container_width=True, disabled=(uploaded_file is None))
 
 # Execution Logic
 if process_clicked and uploaded_file is not None:
@@ -255,47 +182,22 @@ if st.session_state.processed_data is not None:
     # Metrics Grid
     m1, m2, m3, m4, m5, m6 = st.columns(6)
     with m1:
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Document Name</div>
-            <div class="metric-value" style="font-size: 1.1rem; word-break: break-all;">{data['document_name']}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric(label="Document Name", value=data['document_name'])
     with m2:
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Format</div>
-            <div class="metric-value">{data['document_type'].upper()}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric(label="Format", value=data['document_type'].upper())
     with m3:
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Pages / Sections</div>
-            <div class="metric-value">{data['total_pages']}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric(label="Pages / Sections", value=data['total_pages'])
     with m4:
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Total Characters</div>
-            <div class="metric-value">{data['total_characters']:,}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric(label="Total Characters", value=f"{data['total_characters']:,}")
     with m5:
         strat = data.get("chunking_strategy", "deterministic")
         if strat == "llama3.2_semantic":
-            strat_label = "🤖 Llama 3.2"
+            strat_label = "Llama 3.2"
         elif "fallback" in strat:
-            strat_label = "⚙️ Fallback"
+            strat_label = "Fallback"
         else:
-            strat_label = "⚙️ Deterministic"
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Strategy ({data['total_chunks']} chunks)</div>
-            <div class="metric-value" style="font-size: 1.15rem;">{strat_label}</div>
-        </div>
-        """, unsafe_allow_html=True)
+            strat_label = "Deterministic"
+        st.metric(label=f"Strategy ({data['total_chunks']} chunks)", value=strat_label)
     with m6:
         breakdown = data.get("language_breakdown", {})
         is_multi = data.get("is_multilingual", False) and len(breakdown) > 1
@@ -307,24 +209,47 @@ if st.session_state.processed_data is not None:
         else:
             title = "Detected Languages"
             items = [
-                f"{get_language_name(lang)} ({lang}) — {pct:.0f}%"
+                f"{get_language_name(lang)} ({lang}) - {pct:.0f}%"
                 for lang, pct in breakdown.items()
             ]
-            langs_display = "<br>".join(items)
+            langs_display = ", ".join(items)
 
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">{title}</div>
-            <div class="metric-value" style="font-size: 0.95rem; line-height: 1.4;">{langs_display}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric(label=title, value=langs_display)
+
+    # Ensure FAISS Vector Store is ready for the current document
+    doc_name = data.get("document_name", "document")
+    if (
+        st.session_state.vector_store is None
+        or st.session_state.vector_store_doc != doc_name
+    ):
+        idx_p = INDEX_DIR / f"{Path(doc_name).stem}_chunks.index"
+        meta_p = INDEX_DIR / f"{Path(doc_name).stem}_chunks.json"
+        if idx_p.exists() and meta_p.exists():
+            try:
+                st.session_state.vector_store = FAISSVectorStore.load_from_disk(idx_p, meta_p)
+                st.session_state.vector_store_doc = doc_name
+            except Exception:
+                st.session_state.vector_store = None
+
+        if st.session_state.vector_store is None:
+            v_store = FAISSVectorStore()
+            v_store.build_from_chunks(chunks)
+            try:
+                v_store.save(idx_p, meta_p)
+            except Exception:
+                pass
+            st.session_state.vector_store = v_store
+            st.session_state.vector_store_doc = doc_name
 
     # Download Button & Quick Actions
+    st.markdown("---")
+    st.markdown("### 3. Multilingual Vector Retrieval")
+
     col_dl, col_search = st.columns([1, 2])
     with col_dl:
         json_bytes = json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8")
         st.download_button(
-            label="📥 Download chunks.json",
+            label="Download chunks.json",
             data=json_bytes,
             file_name=f"{Path(data['document_name']).stem}_chunks.json",
             mime="application/json",
@@ -333,50 +258,82 @@ if st.session_state.processed_data is not None:
         )
 
     with col_search:
-        filter_text = st.text_input("🔍 Filter chunks by keyword or text content:", "")
+        search_query = st.text_input(
+            "Search chunks with multilingual vector retrieval:",
+            value="",
+            help="Performs semantic vector retrieval using multilingual embeddings (supports English, Tamil, Hindi)."
+        )
 
+    # Display Vector Retrieval results if query is entered
+    if search_query and search_query.strip():
+        retrieved_results = st.session_state.vector_store.retrieve(search_query.strip(), top_k=5)
+        st.caption(f"Top {len(retrieved_results)} semantically relevant chunks retrieved via FAISS vector search for: **'{search_query}'**")
+
+        if not retrieved_results:
+            st.info("No matching chunks found.")
+
+        for c in retrieved_results:
+            chunk_id = c.get("chunk_id", "")
+            page_num = c.get("page", c.get("page_number", 1))
+            section_label = str(c.get("section") or "General")
+            lang_code = c.get("language", "unknown")
+            lang_label = f"{get_language_name(lang_code)} ({lang_code})"
+            sim_score = c.get("similarity_score", c.get("score", 0.0))
+
+            meta_parts = [
+                f"**ID:** {chunk_id}",
+                f"**Page:** {page_num}",
+                f"**Section:** {section_label}",
+                f"**Language:** {lang_label}",
+                f"**Similarity Score:** {sim_score:.4f}",
+            ]
+            if "word_count" in c:
+                meta_parts.append(f"**Word Count:** {c['word_count']}")
+
+            original_chunk_text = c.get("text", "")
+
+            with st.container(border=True):
+                st.markdown(" | ".join(meta_parts))
+                st.write(original_chunk_text)
+
+    # 4. Extracted Semantic Chunks (Always displays all document chunks)
     st.markdown("---")
-    st.markdown(f"### 3. Extracted Semantic Chunks ({len(chunks)} Chunks)")
+    st.markdown(f"### 4. Extracted Semantic Chunks ({len(chunks)} Chunks)")
 
-    # Filter chunks if user typed a keyword
-    filtered_chunks = [
-        c for c in chunks
-        if not filter_text or filter_text.lower() in c["text"].lower() or filter_text.lower() in str(c.get("section", "")).lower()
-    ]
+    for c in chunks:
+        chunk_id = c.get("chunk_id", "")
+        page_num = c.get("page_number", c.get("page", 1))
+        section_label = str(c.get("section") or "General")
+        lang_code = c.get("language", "unknown")
+        lang_label = f"{get_language_name(lang_code)} ({lang_code})"
 
-    if filter_text:
-        st.caption(f"Showing {len(filtered_chunks)} of {len(chunks)} chunks matching '{filter_text}'")
+        meta_parts = [
+            f"**ID:** {chunk_id}",
+            f"**Page:** {page_num}",
+            f"**Section:** {section_label}",
+            f"**Language:** {lang_label}",
+            f"**Word Count:** {c.get('word_count', 0)}",
+        ]
 
-    for c in filtered_chunks:
-        lang_label = html.escape(f"{get_language_name(c['language'])} ({c['language']})")
-        section_label = html.escape(str(c.get("section") or "General"))
-        chunk_id_clean = html.escape(str(c['chunk_id']))
-        escaped_chunk_text = html.escape(c['text'])
-        ocr_flag = '<span class="badge badge-ocr">OCR Applied</span>' if c.get("ocr_applied") else ''
-        
         c_strat = c.get("metadata", {}).get("chunking_strategy", data.get("chunking_strategy", "deterministic"))
         if c_strat == "llama3.2_semantic":
-            strat_badge = '<span class="badge badge-strategy">🤖 Llama 3.2 Semantic</span>'
-        elif "fallback" in c_strat:
-            strat_badge = '<span class="badge badge-strategy">⚙️ Deterministic Fallback</span>'
+            meta_parts.append("**Chunking Strategy:** Llama 3.2 Semantic")
+        elif "fallback" in str(c_strat):
+            meta_parts.append("**Chunking Strategy:** Deterministic Fallback")
         else:
-            strat_badge = '<span class="badge badge-strategy">⚙️ Deterministic</span>'
+            meta_parts.append("**Chunking Strategy:** Deterministic")
 
-        st.markdown(f"""
-        <div class="chunk-box">
-            <div>
-                <span class="badge badge-id">ID: {chunk_id_clean}</span>
-                <span class="badge badge-page">📄 Page {c['page_number']}</span>
-                <span class="badge badge-section">🏷️ Section: {section_label}</span>
-                <span class="badge badge-lang">🌐 {lang_label}</span>
-                <span class="badge badge-id">{c['word_count']} words ({c['char_count']} chars)</span>
-                {strat_badge}
-                {ocr_flag}
-            </div>
-            <div class="chunk-text">{escaped_chunk_text}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        if c.get("ocr_applied"):
+            meta_parts.append("**OCR:** Applied")
+
+        original_chunk_text = c.get("text", "")
+
+        with st.container(border=True):
+            st.markdown(" | ".join(meta_parts))
+            st.write(original_chunk_text)
+
+
 
     # Raw JSON Inspector Expander
-    with st.expander("🔍 Inspect Full Raw JSON Payload"):
+    with st.expander("Inspect Full Raw JSON Payload"):
         st.json(data)

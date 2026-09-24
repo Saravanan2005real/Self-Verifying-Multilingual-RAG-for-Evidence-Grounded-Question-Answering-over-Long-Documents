@@ -12,6 +12,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / os.getenv("DATA_DIR", "data")
 UPLOADS_DIR = BASE_DIR / os.getenv("UPLOADS_DIR", "data/uploads")
 PROCESSED_DIR = BASE_DIR / os.getenv("PROCESSED_DIR", "data/processed")
+INDEX_DIR = BASE_DIR / os.getenv("INDEX_DIR", "data/indices")
+
+# Multilingual Embedding & Vector Retrieval Parameters
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+EMBEDDING_DIM = int(os.getenv("EMBEDDING_DIM", "384"))
 
 # Chunking Parameters
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))        # Target characters per chunk
@@ -34,8 +39,9 @@ TESSERACT_CMD = os.getenv("TESSERACT_CMD", r"C:\Program Files\Tesseract-OCR\tess
 
 def ensure_directories():
     """Ensure all required runtime directories exist."""
-    for directory in [DATA_DIR, UPLOADS_DIR, PROCESSED_DIR]:
+    for directory in [DATA_DIR, UPLOADS_DIR, PROCESSED_DIR, INDEX_DIR]:
         directory.mkdir(parents=True, exist_ok=True)
 
 # Run directory check on import
 ensure_directories()
+

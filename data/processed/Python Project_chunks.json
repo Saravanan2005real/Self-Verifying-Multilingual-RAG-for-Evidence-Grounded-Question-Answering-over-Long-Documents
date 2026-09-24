@@ -1,0 +1,64 @@
+{
+  "document_name": "Python Project.docx",
+  "document_type": "docx",
+  "file_size_bytes": 7378,
+  "processed_at": "2026-09-24T16:13:59.033361",
+  "total_pages": 1,
+  "native_text_pages": 1,
+  "ocr_pages": 0,
+  "total_chunks": 2,
+  "total_characters": 2098,
+  "average_chunk_words": 176.5,
+  "average_chunk_chars": 1148.5,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunking_strategy": "llama3.2_semantic",
+  "chunks": [
+    {
+      "chunk_id": "Python Project.docx_c0",
+      "document_name": "Python Project.docx",
+      "page_number": 1,
+      "section": "General",
+      "chunk_index": 0,
+      "text": "Python Project:\n\nURL Shortener:\n\nDescription: The URL shortener is a Python project that converts long URLs into shorter, more manageable links. It takes a long URL as input, generates a unique shortened URL, and redirects users to the original URL when the shortened link is accessed.\n\nScope: The scope of this project involves designing a user interface to input long URLs and display the shortened links, implementing a database to store the mapping between original and shortened URLs, and developing functions to generate unique shortened URLs and handle redirection.\n\nFile Organizer:\n\nDescription: The file organizer is a Python project that helps users organize their files in a directory. It scans a specified directory, categorizes files based on their type (e.g., images, documents, videos), and moves them into respective folders.\n\nScope: The scope of this project involves designing a user interface to specify the directory to organize, implementing functions to identify file types and create folders, and developing a file-moving algorithm to organize files into the appropriate folders.\n\nPassword Manager:\n\nDescription: The password manager is a Python project that securely stores and manages user passwords. It allows users to store their passwords for various accounts, generate strong passwords, and retrieve passwords when needed.\n\nScope: The scope of this project involves implementing encryption algorithms to secure password storage, designing a user interface to input and retrieve passwords, and developing functions to generate strong passwords and store/retrieve them from a database.\n\nQuiz Game:\n\nDescription: The quiz game is a Python project that quizzes users on various topics. It reads questions and answers from a file or database, presents them to the user, and keeps track of their score.",
+      "word_count": 275,
+      "char_count": 1825,
+      "char_start": 0,
+      "char_end": 1825,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1,
+        "chunking_strategy": "llama3.2_semantic"
+      }
+    },
+    {
+      "chunk_id": "Python Project.docx_c1",
+      "document_name": "Python Project.docx",
+      "page_number": 1,
+      "section": "General",
+      "chunk_index": 1,
+      "text": "Description: The quiz game is a Python project that quizzes users on various topics. It reads questions and answers from a file or database, presents them to the user, and keeps track of their score.\n\nScope: The scope of this project involves designing a user interface to display questions and collect user answers, implementing a database or file system to store quiz data, and developing a scoring algorithm to track the user's progress and calculate their final score.",
+      "word_count": 78,
+      "char_count": 472,
+      "char_start": 1827,
+      "char_end": 2299,
+      "language": "en",
+      "source_type": "docx",
+      "ocr_applied": false,
+      "metadata": {
+        "page_start": 1,
+        "chunking_strategy": "llama3.2_semantic"
+      }
+    }
+  ]
+}
