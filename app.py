@@ -13,6 +13,7 @@ sys.path.insert(0, str(BASE_DIR))
 from src.config import (
     UPLOADS_DIR,
     PROCESSED_DIR,
+    INDEX_DIR,
     CHUNK_SIZE,
     CHUNK_OVERLAP,
     SEMANTIC_CHUNKING_ENABLED,
@@ -22,11 +23,12 @@ from src.config import (
 from src.language_detection import get_language_name
 from src.ocr import is_tesseract_available, is_ocr_available, get_ocr_engine_name
 from src.semantic_chunker import OllamaSemanticAdvisor
+from src.vector_store import FAISSVectorStore
 from main import process_document
 
 # Page Configuration
 st.set_page_config(
-    page_title="Stage 1: Document Parsing & Semantic Chunking",
+    page_title="Stage 1 & 2: Document Parsing & Multilingual Vector Retrieval",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -36,6 +38,22 @@ if "processed_data" not in st.session_state:
     st.session_state.processed_data = None
 if "output_file" not in st.session_state:
     st.session_state.output_file = None
+if "vector_store" not in st.session_state:
+    st.session_state.vector_store = None
+if "vector_store_doc" not in st.session_state:
+    st.session_state.vector_store_doc = None
+
+# Auto-load existing processed document if available and not yet loaded in session
+if st.session_state.processed_data is None:
+    existing_processed = sorted(PROCESSED_DIR.glob("*_chunks.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    if existing_processed:
+        try:
+            with open(existing_processed[0], "r", encoding="utf-8") as f:
+                st.session_state.processed_data = json.load(f)
+            st.session_state.output_file = str(existing_processed[0])
+        except Exception:
+            pass
+
 
 # Sidebar Controls
 with st.sidebar:
@@ -198,7 +216,35 @@ if st.session_state.processed_data is not None:
 
         st.metric(label=title, value=langs_display)
 
+    # Ensure FAISS Vector Store is ready for the current document
+    doc_name = data.get("document_name", "document")
+    if (
+        st.session_state.vector_store is None
+        or st.session_state.vector_store_doc != doc_name
+    ):
+        idx_p = INDEX_DIR / f"{Path(doc_name).stem}_chunks.index"
+        meta_p = INDEX_DIR / f"{Path(doc_name).stem}_chunks.json"
+        if idx_p.exists() and meta_p.exists():
+            try:
+                st.session_state.vector_store = FAISSVectorStore.load_from_disk(idx_p, meta_p)
+                st.session_state.vector_store_doc = doc_name
+            except Exception:
+                st.session_state.vector_store = None
+
+        if st.session_state.vector_store is None:
+            v_store = FAISSVectorStore()
+            v_store.build_from_chunks(chunks)
+            try:
+                v_store.save(idx_p, meta_p)
+            except Exception:
+                pass
+            st.session_state.vector_store = v_store
+            st.session_state.vector_store_doc = doc_name
+
     # Download Button & Quick Actions
+    st.markdown("---")
+    st.markdown("### 3. Multilingual Vector Retrieval")
+
     col_dl, col_search = st.columns([1, 2])
     with col_dl:
         json_bytes = json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8")
@@ -212,50 +258,81 @@ if st.session_state.processed_data is not None:
         )
 
     with col_search:
-        filter_text = st.text_input("Filter chunks by keyword or text content:", "")
+        search_query = st.text_input(
+            "Search chunks with multilingual vector retrieval:",
+            value="",
+            help="Performs semantic vector retrieval using multilingual embeddings (supports English, Tamil, Hindi)."
+        )
 
+    # Display Vector Retrieval results if query is entered
+    if search_query and search_query.strip():
+        retrieved_results = st.session_state.vector_store.retrieve(search_query.strip(), top_k=5)
+        st.caption(f"Top {len(retrieved_results)} semantically relevant chunks retrieved via FAISS vector search for: **'{search_query}'**")
+
+        if not retrieved_results:
+            st.info("No matching chunks found.")
+
+        for c in retrieved_results:
+            chunk_id = c.get("chunk_id", "")
+            page_num = c.get("page", c.get("page_number", 1))
+            section_label = str(c.get("section") or "General")
+            lang_code = c.get("language", "unknown")
+            lang_label = f"{get_language_name(lang_code)} ({lang_code})"
+            sim_score = c.get("similarity_score", c.get("score", 0.0))
+
+            meta_parts = [
+                f"**ID:** {chunk_id}",
+                f"**Page:** {page_num}",
+                f"**Section:** {section_label}",
+                f"**Language:** {lang_label}",
+                f"**Similarity Score:** {sim_score:.4f}",
+            ]
+            if "word_count" in c:
+                meta_parts.append(f"**Word Count:** {c['word_count']}")
+
+            original_chunk_text = c.get("text", "")
+
+            with st.container(border=True):
+                st.markdown(" | ".join(meta_parts))
+                st.write(original_chunk_text)
+
+    # 4. Extracted Semantic Chunks (Always displays all document chunks)
     st.markdown("---")
-    st.markdown(f"### 3. Extracted Semantic Chunks ({len(chunks)} Chunks)")
+    st.markdown(f"### 4. Extracted Semantic Chunks ({len(chunks)} Chunks)")
 
-    # Filter chunks if user typed a keyword
-    filtered_chunks = [
-        c for c in chunks
-        if not filter_text or filter_text.lower() in c["text"].lower() or filter_text.lower() in str(c.get("section", "")).lower()
-    ]
-
-    if filter_text:
-        st.caption(f"Showing {len(filtered_chunks)} of {len(chunks)} chunks matching '{filter_text}'")
-
-    for c in filtered_chunks:
-        lang_label = f"{get_language_name(c['language'])} ({c['language']})"
+    for c in chunks:
+        chunk_id = c.get("chunk_id", "")
+        page_num = c.get("page_number", c.get("page", 1))
         section_label = str(c.get("section") or "General")
-        c_strat = c.get("metadata", {}).get("chunking_strategy", data.get("chunking_strategy", "deterministic"))
-        if c_strat == "llama3.2_semantic":
-            strat_label = "Llama 3.2 Semantic"
-        elif "fallback" in c_strat:
-            strat_label = "Deterministic Fallback"
-        else:
-            strat_label = "Deterministic"
+        lang_code = c.get("language", "unknown")
+        lang_label = f"{get_language_name(lang_code)} ({lang_code})"
 
         meta_parts = [
-            f"**ID:** {c['chunk_id']}",
-            f"**Page:** {c['page_number']}",
+            f"**ID:** {chunk_id}",
+            f"**Page:** {page_num}",
             f"**Section:** {section_label}",
             f"**Language:** {lang_label}",
-            f"**Word Count:** {c['word_count']}",
-            f"**Chunking Strategy:** {strat_label}",
+            f"**Word Count:** {c.get('word_count', 0)}",
         ]
+
+        c_strat = c.get("metadata", {}).get("chunking_strategy", data.get("chunking_strategy", "deterministic"))
+        if c_strat == "llama3.2_semantic":
+            meta_parts.append("**Chunking Strategy:** Llama 3.2 Semantic")
+        elif "fallback" in str(c_strat):
+            meta_parts.append("**Chunking Strategy:** Deterministic Fallback")
+        else:
+            meta_parts.append("**Chunking Strategy:** Deterministic")
+
         if c.get("ocr_applied"):
             meta_parts.append("**OCR:** Applied")
 
-        # Clean document text - completely free of HTML markup
-        chunk_text = c.get("text", "")
-        chunk_text = re.sub(r"</?[a-zA-Z][^>]*>", "", chunk_text)
-        chunk_text = re.sub(r"class\s*=\s*['\"][^'\"]*['\"]", "", chunk_text).strip()
+        original_chunk_text = c.get("text", "")
 
         with st.container(border=True):
             st.markdown(" | ".join(meta_parts))
-            st.write(chunk_text)
+            st.write(original_chunk_text)
+
+
 
     # Raw JSON Inspector Expander
     with st.expander("Inspect Full Raw JSON Payload"):

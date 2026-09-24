@@ -1,0 +1,25 @@
+{
+  "document_name": "FLA-unit 1 part 1.pdf",
+  "document_type": "pdf",
+  "file_size_bytes": 9261634,
+  "processed_at": "2026-09-24T17:37:03.306873",
+  "total_pages": 46,
+  "native_text_pages": 46,
+  "ocr_pages": 0,
+  "total_chunks": 0,
+  "total_characters": 0,
+  "average_chunk_words": 0,
+  "average_chunk_chars": 0,
+  "primary_language": "en",
+  "detected_languages": [
+    "en"
+  ],
+  "language_breakdown": {
+    "en": 100.0
+  },
+  "language_summary": "English (en)",
+  "is_multilingual": false,
+  "ocr_used": false,
+  "chunking_strategy": "none",
+  "chunks": []
+}
